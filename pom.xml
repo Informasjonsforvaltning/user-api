@@ -25,9 +25,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.exec.skip>false</maven.exec.skip>
+        <start-class>no.fdk.userapi.UserApiApplication</start-class>
         <!--end standard properties-->
-
-        <docker.image.prefix>dcatno</docker.image.prefix>
+        
         <docker.registry/>
         <unittest.category/>
         <endtoendtest.category/>
@@ -91,16 +91,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>exec</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
