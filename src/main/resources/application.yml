@@ -11,7 +11,7 @@ management:
   endpoints.web.exposure.include: health, readiness
 application:
   hosts:
-    altinnProxyHost: ${ALTINN_PROXY_HOST:http://nginx-altinn-proxy:8080}
+    altinnProxyHost: ${ALTINN_PROXY_HOST:http://fdk-nginx-altinn-proxy:8080}
     orgCatalogueHost: ${ORGANIZATION_CATALOGUE_HOST:http://organization-catalogue:8080}
   whitelists:
     # 920210023   /* this matches in prod system "GJELDSREGISTERET AS”*/

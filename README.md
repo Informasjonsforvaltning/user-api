@@ -1,5 +1,5 @@
 The goal of user API is to provide REST based proxy for allowed users
-Internally, the implementation proxies the user data from Altinn, through module "nginx-altinn-proxy" 
+Internally, the implementation proxies the user data from Altinn, through module "fdk-nginx-altinn-proxy" 
 
 Test:
 
