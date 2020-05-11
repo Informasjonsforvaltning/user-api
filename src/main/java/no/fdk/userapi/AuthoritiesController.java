@@ -25,7 +25,6 @@ public class AuthoritiesController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String getAuthorities(@PathVariable String id) throws NotFoundException  {
-        logger.debug("Authorities request for user {}", id);
 
         if (isPid(id)) {
             return altinnUserService.getAuthorities(id).orElseThrow(NotFoundException::new);

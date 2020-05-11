@@ -26,7 +26,6 @@ public class UsersController {
     //TODO requires authorization!
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUserInfo(@PathVariable String id) throws NotFoundException {
-        logger.debug("Request for user {}", id);
 
         return altinnUserService.getUser(id).orElseThrow(NotFoundException::new);
     }
