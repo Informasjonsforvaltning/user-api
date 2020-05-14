@@ -12,15 +12,17 @@ class RoleFDK (
     private val role: Role
 ) {
     override fun toString(): String {
-        return "$resourceType:$resourceId:$role"
+        return "${resourceType.value}:$resourceId:${role.value}"
     }
 
-    enum class ResourceType {
-        System, Organization
+    enum class ResourceType(val value: String) {
+        System("system"),
+        Organization("organization")
     }
 
-    enum class Role {
-        Admin, Read
+    enum class Role(val value: String) {
+        Admin("admin"),
+        Read("read")
     }
 
     companion object {
