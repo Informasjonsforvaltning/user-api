@@ -3,31 +3,17 @@ package no.fdk.userapi.model
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class AltinnOrganization (
-    private val subject: AltinnSubject
-) {
-    val name: String?
-        get() = subject.name
-
-    val organizationForm: String?
-        get() = subject.organizationForm
-
+data class AltinnOrganization (
+    val name: String?,
+    val organizationForm: String?,
     val organizationNumber: String?
-        get() = subject.organizationNumber
+)
 
-}
-
-class AltinnPerson (
-    private val subject: AltinnSubject,
+data class AltinnPerson (
+    val name: String?,
+    val socialSecurityNumber: String?,
     val organizations: List<AltinnOrganization>
-) {
-    val name: String?
-        get() = subject.name
-
-    val socialSecurityNumber: String?
-        get() = subject.socialSecurityNumber
-
-}
+)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class AltinnSubject (

@@ -15,10 +15,10 @@ class AltinnUserService (
     private val altinnAdapter: AltinnAdapter
 ) {
 
-    fun getUser(id: String?): AltinnPerson? {
+    fun getUser(id: String): AltinnPerson? {
         // Currently we only fetch one role association from Altinn
         // and we interpret it as publisher admin role in fdk system
-        return altinnAdapter.getPerson(id!!)
+        return altinnAdapter.getPerson(id)
     }
 
     fun getAuthorities(id: String): String? {

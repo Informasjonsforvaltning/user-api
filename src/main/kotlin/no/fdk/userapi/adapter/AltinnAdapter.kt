@@ -1,6 +1,8 @@
 package no.fdk.userapi.adapter
 
 import no.fdk.userapi.configuration.HostProperties
+import no.fdk.userapi.mapper.toOrganization
+import no.fdk.userapi.mapper.toPerson
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
 import no.fdk.userapi.model.AltinnSubject
@@ -27,7 +29,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
     fun getPerson(socialSecurityNumber: String): AltinnPerson? {
         val reportees = getReportees(socialSecurityNumber)
         return extractPersonSubject(socialSecurityNumber, reportees)
-            ?.let { AltinnPerson(it, extractOrganizations(reportees)) }
+            ?.toPerson(extractOrganizations(reportees))
     }
 
     companion object {
@@ -38,7 +40,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
             return reportees
                 .filterNotNull()
                 .filter { it.type == "Enterprise" }
-                .map { AltinnOrganization(it) }
+                .map { it.toOrganization() }
         }
     }
 }

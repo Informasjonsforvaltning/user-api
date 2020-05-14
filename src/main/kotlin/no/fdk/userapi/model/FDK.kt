@@ -1,7 +1,7 @@
 package no.fdk.userapi.model
 
 data class UserFDK (
-    val id: String?,
+    val id: String,
     val firstName: String?,
     val lastName: String?
 )
