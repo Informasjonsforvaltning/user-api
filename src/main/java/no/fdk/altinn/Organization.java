@@ -1,7 +1,7 @@
 package no.fdk.altinn;
 
 public class Organization {
-    private Subject subject;
+    private final Subject subject;
 
     Organization(Subject subject) {
         this.subject = subject;

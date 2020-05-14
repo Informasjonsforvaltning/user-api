@@ -29,10 +29,6 @@
         <!--end standard properties-->
         
         <docker.registry/>
-        <unittest.category/>
-        <endtoendtest.category/>
-        <loadtest.category/>
-        <integrationtest.category/>
     </properties>
 
 
@@ -40,6 +36,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.8</version>
         </dependency>
 
         <dependency>
@@ -53,35 +55,6 @@
             <version>5.2</version>
         </dependency>
 
-        <!-- BEGIN LOCAL DEPENDENCIES -->
-        <dependency>
-            <groupId>no.fdk</groupId>
-            <artifactId>webutils-spring</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>no.fdk</groupId>
-            <artifactId>altinn-client</artifactId>
-            <version>1.5.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- END LOCAL DEPENDENCIES -->
-
-        <!-- BEGIN TEST DEPENDENCIES -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.fdk</groupId>
-            <artifactId>test</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- END TEST DEPENDENCIES -->
-
     </dependencies>
 
     <build>
@@ -92,54 +65,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <plugin>
-                <!-- Unit test runner -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-                <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
-                    <groups>no.fdk.test.testcategories.UnitTest</groups> <!-- java.lang.Exception is a hack to make a valid comma-separated list og category classes -->
-                    <argLine>${surefireArgLine}  -Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <!-- Generates coverage reports from unit and integration tests -->
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
-                <executions>
-                    <!--
-                        JaCoCo report for unit tests
-                    -->
-                    <execution>
-                        <id>pre-unit-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
-                            <propertyName>surefireArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>post-unit-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-                            <!-- Sets the output directory for the code coverage report for unit tests. -->
-                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-
 
         </plugins>
 

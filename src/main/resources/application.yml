@@ -23,11 +23,11 @@ application:
 ---
 #Utv-miljø lokalt på egen PC
 spring:
-  profiles: develop, unit-integration
+  profiles: develop
 application:
   hosts:
   #  altinnProxyHost: http://localhost:8126 # the actual proxy, requires cert configuration
     altinnProxyHost: http://localhost:8128 #mock
-    orgCatalogueHost: http://localhost:8140
+    orgCatalogueHost: https://organization-catalogue.staging.fellesdatakatalog.digdir.no
 server:
-  port: 8125
+  port: 8080
