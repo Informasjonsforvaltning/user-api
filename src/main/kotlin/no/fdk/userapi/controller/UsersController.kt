@@ -1,6 +1,6 @@
 package no.fdk.userapi.controller
 
-import no.fdk.userapi.AltinnUserService
+import no.fdk.userapi.service.AltinnUserService
 import no.fdk.userapi.model.UserFDK
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
