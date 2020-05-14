@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+
+  fdk-nginx-altinn-proxy:
+    image: eu.gcr.io/digdir-fdk-infra/fdk-nginx-altinn-proxy-mock:latest
+    ports:
+      - 8128:8080

@@ -1,12 +1,10 @@
 package no.fdk.altinn;
 
-import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +13,6 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpMethod.GET;
 
 public class AltinnClient {
-    private static Logger logger = LoggerFactory.getLogger(AltinnClient.class);
 
     private String altinnProxyHost;
 
@@ -45,7 +42,7 @@ public class AltinnClient {
         RestTemplate restTemplate = new RestTemplate();
 
         String reporteesUrlTemplate = altinnProxyHost + "/api/serviceowner/reportees?ForceEIAuthentication&subject={subject}&servicecode=4814&serviceedition=1&$top=1000";
-        Map<String, String> params = ImmutableMap.of("subject", socialSecurityNumber);
+        Map<String, String> params = Collections.singletonMap("subject", socialSecurityNumber);
 
         return restTemplate.exchange(reporteesUrlTemplate, GET, null, new ParameterizedTypeReference<List<Subject>>() {
         }, params).getBody();

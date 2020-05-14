@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Person {
     List<Organization> organizations;
-    private Subject subject;
+    private final Subject subject;
 
     Person(Subject subject, List<Organization> organizations) {
         this.subject = subject;
