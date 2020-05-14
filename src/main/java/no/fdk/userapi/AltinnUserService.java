@@ -2,8 +2,9 @@ package no.fdk.userapi;
 
 import no.fdk.userapi.adapter.AltinnAdapter;
 import no.fdk.userapi.configuration.WhitelistProperties;
-import no.fdk.userapi.dto.AltinnOrganization;
-import no.fdk.userapi.dto.AltinnPerson;
+import no.fdk.userapi.model.AltinnOrganization;
+import no.fdk.userapi.model.AltinnPerson;
+import no.fdk.userapi.model.RoleFDK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static no.fdk.userapi.ResourceRole.ROOT_ADMIN;
-import static no.fdk.userapi.ResourceRole.ResourceType.organization;
-import static no.fdk.userapi.ResourceRole.Role.admin;
+import static no.fdk.userapi.model.RoleFDK.ResourceType.Organization;
+import static no.fdk.userapi.model.RoleFDK.Role.Admin;
 
 @Service
 public class AltinnUserService {
@@ -46,12 +46,12 @@ public class AltinnUserService {
 
         List<String> resourceRoleTokens = person.getOrganizations().stream()
             .filter(organizationFilter)
-            .map(o -> new ResourceRole(organization, o.getOrganizationNumber(), admin))
+            .map(o -> new RoleFDK(Organization, o.getOrganizationNumber(), Admin))
             .map(Object::toString)
             .collect(Collectors.toList());
 
         if (whitelists.getAdminList().contains(person.getSocialSecurityNumber())) {
-            resourceRoleTokens.add(ROOT_ADMIN.toString());
+            resourceRoleTokens.add(RoleFDK.Companion.getROOT_ADMIN().toString());
         }
 
         return String.join(",", resourceRoleTokens);

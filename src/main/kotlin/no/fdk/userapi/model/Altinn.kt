@@ -1,4 +1,4 @@
-package no.fdk.userapi.dto
+package no.fdk.userapi.model
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

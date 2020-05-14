@@ -1,9 +1,9 @@
 package no.fdk.userapi.adapter
 
 import no.fdk.userapi.configuration.HostProperties
-import no.fdk.userapi.dto.AltinnOrganization
-import no.fdk.userapi.dto.AltinnPerson
-import no.fdk.userapi.dto.AltinnSubject
+import no.fdk.userapi.model.AltinnOrganization
+import no.fdk.userapi.model.AltinnPerson
+import no.fdk.userapi.model.AltinnSubject
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
