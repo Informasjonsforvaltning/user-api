@@ -7,12 +7,9 @@ logging:
   level.no: ${LOG_LEVEL:DEBUG}
   level.org.springframework: WARN
   level.org.springframework.web: WARN
-management:
-  endpoints.web.exposure.include: health, readiness
 application:
   hosts:
     altinnProxyHost: ${ALTINN_PROXY_HOST:http://fdk-nginx-altinn-proxy:8080}
-    orgCatalogueHost: ${ORGANIZATION_CATALOGUE_HOST:http://organization-catalogue:8080}
   whitelists:
     # 920210023   /* this matches in prod system "GJELDSREGISTERET AS”*/
     # 910258028   /* this matches in mock data "LILAND OG ERDAL REVISJON", used in dev, ut1, st1 and it1*/
@@ -26,8 +23,6 @@ spring:
   profiles: develop
 application:
   hosts:
-  #  altinnProxyHost: http://localhost:8126 # the actual proxy, requires cert configuration
-    altinnProxyHost: http://localhost:8128 #mock
-    orgCatalogueHost: https://organization-catalogue.staging.fellesdatakatalog.digdir.no
+    altinnProxyHost: http://localhost:8128
 server:
   port: 8080

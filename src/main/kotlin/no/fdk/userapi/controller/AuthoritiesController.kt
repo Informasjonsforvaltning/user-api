@@ -15,16 +15,15 @@ class AuthoritiesController (
 ) {
 
     @RequestMapping(value = ["/{id}"], method = [RequestMethod.GET])
-    fun getAuthorities(@PathVariable id: String?): ResponseEntity<String> {
+    fun getAuthorities(@PathVariable id: String): ResponseEntity<String> {
         return if (isPid(id)) {
-            altinnUserService.getAuthorities(id!!)
+            altinnUserService.getAuthorities(id)
                 ?.let { ResponseEntity(it, HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NOT_FOUND)
         } else ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
-    private fun isPid(username: String?): Boolean {
-        return username != null && username.matches("^\\d{11}$".toRegex())
-    }
+    private fun isPid(username: String): Boolean =
+        username.matches("^\\d{11}$".toRegex())
 
 }
