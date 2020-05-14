@@ -2,6 +2,7 @@ package no.fdk.userapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.fdk.userapi.model.RoleFDK;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static no.fdk.userapi.ResourceRole.ResourceType.organization;
-import static no.fdk.userapi.ResourceRole.Role.read;
+import static no.fdk.userapi.model.RoleFDK.ResourceType.Organization;
+import static no.fdk.userapi.model.RoleFDK.Role.Read;
 
 @Service
 public class LocalUserService {
@@ -47,7 +48,7 @@ public class LocalUserService {
         List<String> organizations = getOrganizationsAssociatedWithDomain(domain);
 
         List<String> resourceRoleTokens = organizations.stream()
-            .map(o -> new ResourceRole(organization, o, read))
+            .map(o -> new RoleFDK(Organization, o, Read))
             .map(Object::toString)
             .collect(Collectors.toList());
 
