@@ -4,6 +4,7 @@ import no.fdk.altinn.AltinnClient;
 import no.fdk.altinn.Organization;
 import no.fdk.altinn.Person;
 import no.fdk.userapi.configuration.WhitelistProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -18,10 +19,11 @@ import static no.fdk.userapi.ResourceRole.Role.admin;
 
 @Service
 public class AltinnUserService {
-    private AltinnClient altinnClient;
+    private final AltinnClient altinnClient;
+    @Autowired
     private WhitelistProperties whitelists;
 
-    private Predicate<Organization> organizationFilter = (o) -> whitelists.getOrgNrWhitelist().contains(o.getOrganizationNumber()) || whitelists.getOrgFormWhitelist().contains(o.getOrganizationForm());
+    private final Predicate<Organization> organizationFilter = (o) -> whitelists.getOrgNrWhitelist().contains(o.getOrganizationNumber()) || whitelists.getOrgFormWhitelist().contains(o.getOrganizationForm());
 
     AltinnUserService(WhitelistProperties whitelists, AltinnClient altinnClient) {
         this.altinnClient = altinnClient;
