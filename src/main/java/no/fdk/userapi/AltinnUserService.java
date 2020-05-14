@@ -1,9 +1,9 @@
 package no.fdk.userapi;
 
-import no.fdk.altinn.AltinnClient;
-import no.fdk.altinn.Organization;
-import no.fdk.altinn.Person;
+import no.fdk.userapi.adapter.AltinnAdapter;
 import no.fdk.userapi.configuration.WhitelistProperties;
+import no.fdk.userapi.dto.AltinnOrganization;
+import no.fdk.userapi.dto.AltinnPerson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +19,15 @@ import static no.fdk.userapi.ResourceRole.Role.admin;
 
 @Service
 public class AltinnUserService {
-    private final AltinnClient altinnClient;
+    @Autowired
+    private AltinnAdapter altinnAdapter;
     @Autowired
     private WhitelistProperties whitelists;
 
-    private final Predicate<Organization> organizationFilter = (o) -> whitelists.getOrgNrWhitelist().contains(o.getOrganizationNumber()) || whitelists.getOrgFormWhitelist().contains(o.getOrganizationForm());
+    private final Predicate<AltinnOrganization> organizationFilter = (o) -> whitelists.getOrgNrWhitelist().contains(o.getOrganizationNumber()) || whitelists.getOrgFormWhitelist().contains(o.getOrganizationForm());
 
-    AltinnUserService(WhitelistProperties whitelists, AltinnClient altinnClient) {
-        this.altinnClient = altinnClient;
+    AltinnUserService(WhitelistProperties whitelists, AltinnAdapter altinnAdapter) {
+        this.altinnAdapter = altinnAdapter;
         this.whitelists = whitelists;
     }
 
@@ -34,14 +35,14 @@ public class AltinnUserService {
         // Currently we only fetch one role association from Altinn
         // and we interpret it as publisher admin role in fdk system
 
-        return altinnClient.getPerson(id).map(AltinnUserService.AltinnUserAdapter::new);
+        return altinnAdapter.getPerson(id).map(AltinnUserService.AltinnUserAdapter::new);
     }
 
     Optional<String> getAuthorities(String id) {
-        return altinnClient.getPerson(id).map(this::getPersonAuthorities);
+        return altinnAdapter.getPerson(id).map(this::getPersonAuthorities);
     }
 
-    private String getPersonAuthorities(Person person) {
+    private String getPersonAuthorities(AltinnPerson person) {
 
         List<String> resourceRoleTokens = person.getOrganizations().stream()
             .filter(organizationFilter)
@@ -57,9 +58,9 @@ public class AltinnUserService {
     }
 
     private static class AltinnUserAdapter implements User {
-        private Person person;
+        private AltinnPerson person;
 
-        AltinnUserAdapter(Person person) {
+        AltinnUserAdapter(AltinnPerson person) {
             this.person = person;
         }
 
