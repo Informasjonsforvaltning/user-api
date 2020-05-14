@@ -8,9 +8,7 @@ import no.fdk.userapi.model.RoleFDK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -31,15 +29,15 @@ public class AltinnUserService {
         this.whitelists = whitelists;
     }
 
-    Optional<User> getUser(String id) {
+    public AltinnPerson getUser(String id) {
         // Currently we only fetch one role association from Altinn
         // and we interpret it as publisher admin role in fdk system
 
-        return altinnAdapter.getPerson(id).map(AltinnUserService.AltinnUserAdapter::new);
+        return altinnAdapter.getPerson(id);
     }
 
-    Optional<String> getAuthorities(String id) {
-        return altinnAdapter.getPerson(id).map(this::getPersonAuthorities);
+    public String getAuthorities(String id) {
+        return getPersonAuthorities(altinnAdapter.getPerson(id));
     }
 
     private String getPersonAuthorities(AltinnPerson person) {
@@ -55,30 +53,5 @@ public class AltinnUserService {
         }
 
         return String.join(",", resourceRoleTokens);
-    }
-
-    private static class AltinnUserAdapter implements User {
-        private AltinnPerson person;
-
-        AltinnUserAdapter(AltinnPerson person) {
-            this.person = person;
-        }
-
-        public String getId() {
-            return person.getSocialSecurityNumber();
-        }
-
-        private List<String> getNames() {
-            return Arrays.asList(person.getName().split("\\s+"));
-        }
-
-        public String getFirstName() {
-            List<String> firstNamesList = getNames().subList(0, (getNames().size() - 1));
-            return String.join(" ", firstNamesList);
-        }
-
-        public String getLastName() {
-            return getNames().get(getNames().size() - 1);
-        }
     }
 }
