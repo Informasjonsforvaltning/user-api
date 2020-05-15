@@ -3,9 +3,9 @@ package no.fdk.userapi.controller
 import no.fdk.userapi.service.AltinnUserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -14,7 +14,7 @@ class AuthoritiesController (
     private val altinnUserService: AltinnUserService
 ) {
 
-    @RequestMapping(value = ["/{id}"], method = [RequestMethod.GET])
+    @GetMapping(value = ["/{id}"])
     fun getAuthorities(@PathVariable id: String): ResponseEntity<String> {
         return if (isPid(id)) {
             altinnUserService.getAuthorities(id)

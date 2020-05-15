@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import no.fdk.userapi.mapper.toUserFDK
+import org.springframework.web.bind.annotation.GetMapping
 
 @RestController
 @RequestMapping(value = ["/users"])
@@ -21,7 +21,7 @@ class UsersController (
      * This endpoint is active user database
      * Currently We do not store permanently users, instead we get dynamically the user data and privileges from Altinn.
      */
-    @RequestMapping(value = ["/{id}"], method = [RequestMethod.GET])
+    @GetMapping(value = ["/{id}"])
     fun getUserInfo(@PathVariable id: String): ResponseEntity<UserFDK> {
         return altinnUserService.getUser(id)
             ?.toUserFDK()
