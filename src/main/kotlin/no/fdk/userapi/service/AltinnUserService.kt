@@ -31,13 +31,13 @@ class AltinnUserService (
                 .asSequence()
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
                 .filter { org: AltinnOrganization ->
-                    whitelists.getOrgNrWhitelist().contains(org.organizationNumber)
-                        || whitelists.getOrgFormWhitelist().contains(org.organizationForm) }
+                    whitelists.orgNrWhitelist.contains(org.organizationNumber)
+                        || whitelists.orgFormWhitelist.contains(org.organizationForm) }
                 .map { org: AltinnOrganization -> RoleFDK(ResourceType.Organization, org.organizationNumber!!, RoleFDK.Role.Admin) }
                 .map { obj: RoleFDK -> obj.toString() }
                 .toMutableList()
 
-            if (whitelists.getAdminList().contains(person.socialSecurityNumber!!)) {
+            if (whitelists.adminList.contains(person.socialSecurityNumber)) {
                 resourceRoleTokens.add(ROOT_ADMIN.toString())
             }
 
