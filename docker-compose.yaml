@@ -6,3 +6,16 @@ services:
     image: eu.gcr.io/digdir-fdk-infra/fdk-nginx-altinn-proxy-mock:latest
     ports:
       - 8128:8080
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    ports:
+      - 27017:27017
+
+  sso:
+    image: docker.pkg.github.com/informasjonsforvaltning/auth-utils-java/auth-utils-java:latest
+    ports:
+      - 8084:8084

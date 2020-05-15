@@ -6,27 +6,29 @@ data class UserFDK (
     val lastName: String?
 )
 
-class RoleFDK (
-    private val resourceType: ResourceType,
-    private val resourceId: String,
-    private val role: Role
+data class RoleFDK (
+    val resourceType: ResourceType,
+    val resourceId: String,
+    val role: Role
 ) {
-    override fun toString(): String {
-        return "${resourceType.value}:$resourceId:${role.value}"
-    }
+    override fun toString(): String =
+        "${resourceType.value}:$resourceId:${role.value}"
 
     enum class ResourceType(val value: String) {
         System("system"),
-        Organization("organization")
+        Organization("organization"),
+        Invalid("invalid")
     }
 
     enum class Role(val value: String) {
         Admin("admin"),
-        Read("read")
+        Read("read"),
+        Invalid("invalid")
     }
 
     companion object {
         val ROOT_ADMIN = RoleFDK(ResourceType.System, "root", Role.Admin)
+        val INVALID = RoleFDK(ResourceType.Invalid, "unknown", Role.Invalid)
     }
 
 }
