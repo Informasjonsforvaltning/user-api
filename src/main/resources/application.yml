@@ -16,6 +16,8 @@ application:
     orgNrWhitelist: ${ORGNR_WHITELIST:920210023,910258028}
     orgFormWhitelist: ${ORGFORM_WHITELIST:ADOS,FKF,FYLK,IKS,KF,KIRK,KOMM,ORGL,SF,STAT,SÆR}
     adminList: ${ADMIN_LIST:23076102252} #MAUD GULLIKSEN
+server:
+  port: 8080
 
 ---
 #Utv-miljø lokalt på egen PC
@@ -24,5 +26,3 @@ spring:
 application:
   hosts:
     altinnProxyHost: http://localhost:8128
-server:
-  port: 8080

@@ -22,6 +22,7 @@ class RoleFDK (
 
     enum class Role(val value: String) {
         Admin("admin"),
+        Write("write"),
         Read("read")
     }
 
