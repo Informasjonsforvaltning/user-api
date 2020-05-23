@@ -33,3 +33,6 @@ fun AltinnSubject.toOrganization(): AltinnOrganization =
         organizationForm,
         organizationNumber
     )
+
+fun isPid(username: String): Boolean =
+    username.matches("^\\d{11}$".toRegex())
