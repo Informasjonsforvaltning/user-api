@@ -97,6 +97,50 @@ paths:
             application/json:
               schema:
                 type: string
+  /terms/altinn/{id}:
+    get:
+      tags:
+        - terms
+      description: Get the accepted version of FDK terms for organizations associated with the user
+      operationId: getOrgTermsAltinn
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: User not found
+  /terms/difi:
+    get:
+      tags:
+        - terms
+      description: Get the accepted version of FDK terms for organizations associated with the user
+      operationId: getOrgTermsDifi
+      parameters:
+        - name: orgs
+          in: query
+          description: organization numbers
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   schemas:
     User:

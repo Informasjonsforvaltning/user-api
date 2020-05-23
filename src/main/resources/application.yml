@@ -10,12 +10,16 @@ logging:
 application:
   hosts:
     altinnProxyHost: ${ALTINN_PROXY_HOST:http://fdk-nginx-altinn-proxy:8080}
+    termsHost: ${ALTINN_PROXY_HOST:http://terms-and-conditions:8080}
   whitelists:
     # 920210023   /* this matches in prod system "GJELDSREGISTERET AS”*/
     # 910258028   /* this matches in mock data "LILAND OG ERDAL REVISJON", used in dev, ut1, st1 and it1*/
     orgNrWhitelist: ${ORGNR_WHITELIST:920210023,910258028}
     orgFormWhitelist: ${ORGFORM_WHITELIST:ADOS,FKF,FYLK,IKS,KF,KIRK,KOMM,ORGL,SF,STAT,SÆR}
     adminList: ${ADMIN_LIST:23076102252} #MAUD GULLIKSEN
+  secrets:
+    ssoApiKey: ${SSO_API_KEY}
+    userApiKey: ${USER_API_KEY}
 server:
   port: 8080
 
@@ -26,3 +30,8 @@ spring:
 application:
   hosts:
     altinnProxyHost: http://localhost:8128
+    termsHost: http://localhost:8182
+  secrets:
+    ssoApiKey: ssosecret
+    userApiKey: userapisecret
+server.port: 8125

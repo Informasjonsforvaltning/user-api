@@ -3,9 +3,10 @@ package no.fdk.userapi.configuration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
+
 @ConstructorBinding
-@ConfigurationProperties("application.hosts")
-data class HostProperties (
-    val altinnProxyHost: String,
-    val termsHost: String
+@ConfigurationProperties("application.secrets")
+data class SecurityProperties (
+    val ssoApiKey: String,
+    val userApiKey: String
 )
