@@ -10,7 +10,7 @@ logging:
 application:
   hosts:
     altinnProxyHost: ${ALTINN_PROXY_HOST:http://fdk-nginx-altinn-proxy:8080}
-    termsHost: ${ALTINN_PROXY_HOST:http://terms-and-conditions:8080}
+    termsHost: ${TERMS_AND_CONDITIONS_HOST:http://terms-and-conditions:8080}
   whitelists:
     # 920210023   /* this matches in prod system "GJELDSREGISTERET AS”*/
     # 910258028   /* this matches in mock data "LILAND OG ERDAL REVISJON", used in dev, ut1, st1 and it1*/
