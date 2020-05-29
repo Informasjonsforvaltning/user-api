@@ -32,7 +32,7 @@ class AltinnUserService (
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
                 .filter { org: AltinnOrganization ->
                     whitelists.orgNrWhitelist.contains(org.organizationNumber)
-                        || whitelists.orgFormWhitelist.contains(org.organizationForm) }
+                        && whitelists.orgFormWhitelist.contains(org.organizationForm) }
                 .map { org: AltinnOrganization -> RoleFDK(ResourceType.Organization, org.organizationNumber!!, RoleFDK.Role.Admin) }
                 .map { obj: RoleFDK -> obj.toString() }
                 .toMutableList()
