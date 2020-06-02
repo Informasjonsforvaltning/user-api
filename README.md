@@ -1,12 +1,18 @@
-The goal of user API is to provide REST based proxy for allowed users
-Internally, the implementation proxies the user data from Altinn, through module "fdk-nginx-altinn-proxy" 
+This API provides SSO with additional information and function. It proxies user data from Altinn, through module "fdk-nginx-altinn-proxy", maps external roles to associated FDK-roles and gets information regarding FDK terms and conditions related to the users associated organizations.
 
-Test:
+## Requirements
+- maven
+- java 8
+- docker
+- docker-compose
 
+## Run tests
 ```
-#run user-api
-docker-compose up -d user-api
+mvn verify
+```
 
-#test
-curl "http://localhost:8124/users/03096000854"
+## Run locally
+```
+docker-compose up -d
+mvn spring-boot:run -Dspring.profiles.active=develop
 ```
