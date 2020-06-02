@@ -35,3 +35,18 @@ application:
     ssoApiKey: ssosecret
     userApiKey: userapisecret
 server.port: 8125
+
+---
+spring:
+  profiles: contract-test
+application:
+  hosts:
+    altinnProxyHost: http://localhost:5000/altinn
+    termsHost: http://localhost:5000/terms
+  whitelists:
+    adminList: ${ADMIN_LIST:10987654321}
+    orgNrWhitelist: ${ORGNR_WHITELIST:920210023,910258028,123456789}
+  secrets:
+    ssoApiKey: ssosecret
+    userApiKey: userapisecret
+server.port: 5050
