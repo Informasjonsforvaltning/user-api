@@ -1,5 +1,6 @@
 package no.fdk.userapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -16,6 +17,7 @@ data class AltinnPerson (
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class AltinnSubject (
     @JsonProperty("Name")
     val name: String? = null,
