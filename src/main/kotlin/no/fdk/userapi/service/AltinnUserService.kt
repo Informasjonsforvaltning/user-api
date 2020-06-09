@@ -31,8 +31,9 @@ class AltinnUserService (
                 .asSequence()
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
                 .filter { org: AltinnOrganization ->
+                    // Organizations should either have an acceptable organization form or be specifically allowed through orgNrWhitelist
                     whitelists.orgNrWhitelist.contains(org.organizationNumber)
-                        && whitelists.orgFormWhitelist.contains(org.organizationForm) }
+                        || whitelists.orgFormWhitelist.contains(org.organizationForm) }
                 .map { org: AltinnOrganization -> RoleFDK(ResourceType.Organization, org.organizationNumber!!, RoleFDK.Role.Admin) }
                 .map { obj: RoleFDK -> obj.toString() }
                 .toMutableList()

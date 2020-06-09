@@ -79,16 +79,14 @@ class AltinnUser {
                 name = "Not in orgnr list", organizationNumber = "987654321", organizationForm = "STAT")
             val orgNotInOrgFormWhitelist = AltinnOrganization(
                 name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID")
-            val orgOk = AltinnOrganization(
-                name = "Org OK", organizationNumber = "910258028", organizationForm = "STAT")
             val person = AltinnPerson(
                 "First Last",
                 ssn,
-                listOf(ORG, orgNotInOrgNrWhitelist, orgNotInOrgFormWhitelist, orgOk))
+                listOf(ORG, orgNotInOrgNrWhitelist, orgNotInOrgFormWhitelist))
 
             whenever(altinnAdapter.getPerson(ssn)).thenReturn(person)
 
-            assertEquals("${orgAdmin(ORG.organizationNumber!!)},${orgAdmin(orgOk.organizationNumber!!)},$SYS_ADMIN", altinnUserService.getAuthorities(ssn))
+            assertEquals("${orgAdmin(ORG.organizationNumber!!)},${orgAdmin(orgNotInOrgNrWhitelist.organizationNumber!!)},${orgAdmin(orgNotInOrgFormWhitelist.organizationNumber!!)},$SYS_ADMIN", altinnUserService.getAuthorities(ssn))
         }
 
     }
