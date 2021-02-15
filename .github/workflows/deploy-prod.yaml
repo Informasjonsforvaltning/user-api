@@ -29,7 +29,7 @@ jobs:
         run: docker build -f Dockerfile.deploy . -t eu.gcr.io/digdir-fdk-infra/user-api:$GITHUB_SHA -t eu.gcr.io/digdir-fdk-infra/user-api:latest
 
       - name: Publish docker image to Google Cloud
-        run: docker -- push eu.gcr.io/digdir-fdk-infra/user-api
+        run: docker -- push eu.gcr.io/digdir-fdk-infra/user-api -a
 
       - name: Apply Helm template
         run: |
