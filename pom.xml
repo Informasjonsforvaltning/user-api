@@ -20,7 +20,7 @@
 
     <properties>
         <!--standard properties-->
-        <java.release>1.8</java.release>
+        <java.release>15</java.release>
         <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -30,8 +30,6 @@
         <!--end standard properties-->
 
         <kotlin.version>1.4.31</kotlin.version>
-
-        <start-class>no.fdk.userapi.UserApiApplication</start-class>
 
     </properties>
 
