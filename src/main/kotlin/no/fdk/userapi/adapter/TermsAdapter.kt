@@ -28,13 +28,13 @@ class TermsAdapter(
                     }
                 } else {
                     errorStream.bufferedReader().use {
-                        logger.error("Unable to get accepted terms version", it.readText())
+                        logger.error(Exception("Unable to get accepted terms version: ${it.readText()}").stackTraceToString())
                     }
                     return "0.0.0"
                 }
             }
         } catch (ex: Exception) {
-            logger.error("Unable to get accepted terms version", ex)
+            logger.error("${ex.stackTraceToString()}: Unable to get accepted terms version")
             return "0.0.0"
         }
     }
