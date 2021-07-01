@@ -22,7 +22,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         return try {
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
-            logger.error("Unable to get reportees from Altinn")
+            logger.error(Exception("Unable to get reportees from Altinn").stackTraceToString())
             emptyList()
         }
     }
