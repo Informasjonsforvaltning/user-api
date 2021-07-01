@@ -19,9 +19,11 @@
                 <logLevel>
                     <fieldName>severity</fieldName>
                 </logLevel>
-                <message/>
+                <message>
+                    <fieldName>shortMessage</fieldName>
+                </message>
                 <pattern>
-                    <pattern>{ "serviceContext": { "service": "user-api" } }</pattern>
+                    <pattern>{ "message": "%exception%message", "serviceContext": { "service": "user-api" } }</pattern>
                 </pattern>
             </providers>
         </encoder>
