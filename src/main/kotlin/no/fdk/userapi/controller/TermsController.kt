@@ -36,4 +36,13 @@ class TermsController(
             ResponseEntity(termsService.getOrgTermsDifi(orgs), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
+    @GetMapping(value = ["/oslokommune"])
+    fun getOrgTermsOK(
+        httpServletRequest: HttpServletRequest,
+        @RequestParam(value = "orgnames", required = true) orgNames: List<String>
+    ): ResponseEntity<String> =
+        if(endpointPermissions.isFromFDKCluster(httpServletRequest)) {
+            ResponseEntity(termsService.getOrgTermsOk(orgNames), HttpStatus.OK)
+        } else ResponseEntity(HttpStatus.FORBIDDEN)
+
 }

@@ -2,8 +2,10 @@ package no.fdk.userapi.controller
 
 import no.fdk.userapi.mapper.isPid
 import no.fdk.userapi.mapper.mapAuthoritiesFromDifiRole
+import no.fdk.userapi.mapper.mapAuthoritiesFromOK
 import no.fdk.userapi.service.AltinnUserService
 import no.fdk.userapi.service.EndpointPermissions
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
+
+private val logger = LoggerFactory.getLogger(AuthoritiesController::class.java)
 
 @RestController
 @RequestMapping(value = ["/authorities"])
@@ -41,5 +45,16 @@ class AuthoritiesController (
         if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
             ResponseEntity(mapAuthoritiesFromDifiRole(roles, orgs), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
+
+    @GetMapping(value = ["/oslokommune"])
+    fun getOKAuthorities(
+        httpServletRequest: HttpServletRequest,
+        @RequestParam(value = "roles", required = true) roles: List<String>,
+        @RequestParam(value = "orgnames", required = true) orgNames: List<String>
+    ): ResponseEntity<String> {
+        return if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
+            ResponseEntity(mapAuthoritiesFromOK(roles, orgNames), HttpStatus.OK)
+        } else ResponseEntity(HttpStatus.FORBIDDEN)
+    }
 
 }

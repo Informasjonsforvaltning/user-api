@@ -1,8 +1,6 @@
 package no.fdk.userapi.contract
 
-import no.fdk.userapi.utils.SSO_KEY
-import no.fdk.userapi.utils.WiremockContext
-import no.fdk.userapi.utils.apiGet
+import no.fdk.userapi.utils.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -101,6 +99,30 @@ class Authorities : WiremockContext() {
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:123456789:write", response["body"])
+        }
+
+    }
+
+    @Nested
+    internal inner class OsloKommune {
+
+        @Test
+        fun forbiddenWithWrongApiKey() {
+            val response = apiGet(
+                path = "/authorities/oslokommune?roles=$OK_ADMIN&orgnames=Drift",
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+
+            assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
+        }
+
+        @Test
+        fun orgRolesIgnoredWhenMissingOrgAssociations() {
+            val response = apiGet(
+                path = "/authorities/oslokommune?roles=$OK_ADMIN,$OK_WRITE,$OK_READ&orgnames=Drift",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("organization:971183675:admin", response["body"])
         }
 
     }

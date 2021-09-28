@@ -85,4 +85,38 @@ class Terms : WiremockContext()  {
         }
 
     }
+
+    @Nested
+    internal inner class OsloKommune {
+
+        @Test
+        fun forbiddenWithWrongApiKey() {
+            val response = apiGet(
+                path = "/terms/oslokommune?orgnames=Drift",
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+
+            assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
+        }
+
+        @Test
+        fun respondWithVersionZeroWhenNoAcceptationFound() {
+            val response = apiGet(
+                path = "/terms/oslokommune?orgnames=Drift",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("971183675:0.0.0", response["body"])
+        }
+
+        @Test
+        fun checksAllGivenOrgs() {
+            val response = apiGet(
+                path = "/terms/oslokommune?orgnames=${java.net.URLEncoder.encode("Drift,Oslo Havn KF,Renovasjons- og gjenvinningsetaten", "utf-8")}",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("971183675:0.0.0,987592567:1.0.1,923954791:12.16.11", response["body"])
+        }
+
+    }
 }
