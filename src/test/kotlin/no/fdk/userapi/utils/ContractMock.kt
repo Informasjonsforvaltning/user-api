@@ -37,6 +37,16 @@ fun startMockServer() {
             get(urlEqualTo("/terms/terms/org/123456789/version"))
                 .willReturn(aResponse().withStatus(404)))
 
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org/971183675/version"))
+                .willReturn(aResponse().withStatus(404)))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org/987592567/version"))
+                .willReturn(aResponse().withStatus(200).withBody("1.0.1")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org/923954791/version"))
+                .willReturn(aResponse().withStatus(200).withBody("12.16.11")))
+
         mockserver.start()
     }
 }

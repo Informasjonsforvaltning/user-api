@@ -10,6 +10,10 @@ const val AUTHOR_ROLE: String = "author"
 const val CONTRIBUTOR_ROLE: String = "contributor"
 const val SUBSCRIBER_ROLE: String = "subscriber"
 
+const val OK_ADMIN = "ead5e6c2-95ad-4dc7-8172-3ecdb1f0e127"
+const val OK_WRITE = "2036c732-f82f-4f40-8b3d-9b678dae6c07"
+const val OK_READ = "1f8c1441-dab0-43a5-8984-4e9f12f4e2da"
+
 const val SYS_ADMIN: String = "system:root:admin"
 fun orgAdmin(orgNr: String) = "organization:$orgNr:admin"
 fun orgWrite(orgNr: String) = "organization:$orgNr:write"

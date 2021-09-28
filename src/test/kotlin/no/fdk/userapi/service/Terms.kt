@@ -108,4 +108,39 @@ class Terms {
 
     }
 
+    @Nested
+    internal inner class OsloKommuneTerms {
+
+        @Test
+        fun orgHasNotAccepted() {
+            val org = Pair("Oslo Havn KF", "987592567")
+            whenever(termsAdapter.orgAcceptedTermsVersion(org.second)).thenReturn("0.0.0")
+
+            assertEquals("${org.second}:0.0.0", termsService.getOrgTermsOk(listOf(org.first)))
+        }
+
+        @Test
+        fun orgHasAccepted() {
+            val org = Pair("Drift", "971183675")
+            whenever(termsAdapter.orgAcceptedTermsVersion(org.second)).thenReturn("1.2.3")
+
+            assertEquals("${org.second}:1.2.3", termsService.getOrgTermsOk(listOf(org.first)))
+        }
+
+        @Test
+        fun severalOrgs() {
+            val org0 = Pair("Drift", "971183675")
+            val org1 = Pair("Oslo Havn KF", "987592567")
+            val org2 = Pair("Renovasjons- og gjenvinningsetaten", "923954791")
+            whenever(termsAdapter.orgAcceptedTermsVersion(org0.second)).thenReturn("1.2.3")
+            whenever(termsAdapter.orgAcceptedTermsVersion(org1.second)).thenReturn("0.0.0")
+            whenever(termsAdapter.orgAcceptedTermsVersion(org2.second)).thenReturn("1.0.0")
+
+            val response = termsService.getOrgTermsOk(listOf(org0.first, org1.first, org2.first))
+
+            assertEquals("${org0.second}:1.2.3,${org1.second}:0.0.0,${org2.second}:1.0.0", response)
+        }
+
+    }
+
 }
