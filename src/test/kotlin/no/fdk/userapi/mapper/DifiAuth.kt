@@ -17,12 +17,10 @@ class DifiAuth {
 
     @Test
     fun noInputRolesReturnsEmptyString() {
-        val nullInput = mapAuthoritiesFromDifiRole(null, null)
         val emptyInput = mapAuthoritiesFromDifiRole(emptyList(), emptyList())
         val withOrg = mapAuthoritiesFromDifiRole(emptyList(), listOf("123456789"))
         val randomRole = mapAuthoritiesFromDifiRole(listOf("random"), listOf("123456789"))
 
-        assertEquals("", nullInput)
         assertEquals("", emptyInput)
         assertEquals("", withOrg)
         assertEquals("", randomRole)
@@ -30,7 +28,7 @@ class DifiAuth {
 
     @Test
     fun editorToSysAdmin() {
-        val noOrg = mapAuthoritiesFromDifiRole(listOf(EDITOR_ROLE), null)
+        val noOrg = mapAuthoritiesFromDifiRole(listOf(EDITOR_ROLE), emptyList())
         val withOrg = mapAuthoritiesFromDifiRole(listOf(EDITOR_ROLE), listOf("123456789"))
 
         assertEquals(SYS_ADMIN, noOrg)
@@ -54,11 +52,9 @@ class DifiAuth {
     fun orgRolesDemandsOrgNr() {
         val orgNr = "123456789"
 
-        val nullOrgs = mapAuthoritiesFromDifiRole(listOf(AUTHOR_ROLE), null)
         val emptyOrgs = mapAuthoritiesFromDifiRole(listOf(CONTRIBUTOR_ROLE), emptyList())
         val notEnoughOrgs = mapAuthoritiesFromDifiRole(listOf(AUTHOR_ROLE, SUBSCRIBER_ROLE), listOf(orgNr))
 
-        assertEquals("", nullOrgs)
         assertEquals("", emptyOrgs)
         assertEquals(orgAdmin(orgNr), notEnoughOrgs)
     }

@@ -8,10 +8,7 @@ private const val AUTHOR = "author"
 private const val CONTRIBUTOR = "contributor"
 private const val SUBSCRIBER = "subscriber"
 
-fun mapAuthoritiesFromDifiRole(roles: List<String>?, orgList: List<String>?): String {
-    if (roles == null) return ""
-    val orgs: List<String> = orgList ?: emptyList()
-
+fun mapAuthoritiesFromDifiRole(roles: List<String>, orgs: List<String>): String {
     var orgIndex = 0
 
     val fdkRoles = roles.mapNotNull {
