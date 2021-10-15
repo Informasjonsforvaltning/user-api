@@ -28,6 +28,16 @@ fun startMockServer() {
                 .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_1)))
 
         mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=10987654321&reportee=920210023"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_RIGHTS_0)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=11223344556&reportee=910258028"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_RIGHTS_1)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=11223344556&reportee=123456789"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_RIGHTS_2)))
+
+        mockserver.stubFor(
             get(urlEqualTo("/terms/terms/org/920210023/version"))
                 .willReturn(aResponse().withStatus(200).withBody("1.2.3")))
         mockserver.stubFor(

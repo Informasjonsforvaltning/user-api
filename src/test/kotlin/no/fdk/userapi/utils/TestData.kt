@@ -71,3 +71,84 @@ val ALTINN_PERSON_1 = """
       }
     ]
 """.trimIndent()
+
+val ALTINN_RIGHTS_0 = """
+    {
+        "Subject": {
+            "Name": "FIRST NAME LAST",
+            "Type": "Person",
+            "SocialSecurityNumber": "10987654321"
+        },
+        "Reportee": {
+            "Name": "KARMSUND OG KYSNESSTRAND REVISJON",
+            "Type": "Enterprise",
+            "OrganizationNumber": "920210023",
+            "Status": "Active"
+        },
+        "Rights": [
+            {
+                "RightID": 1018549,
+                "RightType": "Service",
+                "ServiceCode": "4814",
+                "ServiceEditionCode": 20,
+                "Action": "Read",
+                "RightSourceType": "RoleTypeRights",
+                "IsDelegatable": true
+            }
+        ]
+    }
+""".trimIndent()
+
+val ALTINN_RIGHTS_1 = """
+    {
+        "Subject": {
+            "Name": "ANOTHER PERSON",
+            "Type": "Person",
+            "SocialSecurityNumber": "11223344556"
+        },
+        "Reportee": {
+            "Name": "RAMSUND OG ROGNAN REVISJON",
+            "Type": "Enterprise",
+            "OrganizationNumber": "910258028",
+            "Status": "Active"
+        },
+        "Rights": [
+            {
+                "RightID": 1018548,
+                "RightType": "Service",
+                "ServiceCode": "4814",
+                "ServiceEditionCode": 20,
+                "Action": "Read",
+                "RightSourceType": "RoleTypeRights",
+                "IsDelegatable": true
+            }
+        ]
+    }
+""".trimIndent()
+
+val ALTINN_RIGHTS_2 = """
+    {
+        "Subject": {
+            "Name": "ANOTHER PERSON",
+            "Type": "Person",
+            "SocialSecurityNumber": "11223344556"
+        },
+        "Reportee": {
+            "Name": "SKATVAL OG BREIVIKBOTN",
+            "Type": "Enterprise",
+            "OrganizationNumber": "123456789",
+            "Status": "Active"
+        },
+        "Rights": [
+            {
+                "RightID": 1018547,
+                "RightType": "Service",
+                "ServiceCode": "4814",
+                "ServiceEditionCode": 20,
+                "Action": "Read",
+                "RightSourceType": "RoleTypeRights",
+                "IsDelegatable": true
+            }
+        ]
+    }
+""".trimIndent()

@@ -5,9 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.fdk.userapi.configuration.HostProperties
 import no.fdk.userapi.mapper.toOrganization
 import no.fdk.userapi.mapper.toPerson
-import no.fdk.userapi.model.AltinnOrganization
-import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.AltinnSubject
+import no.fdk.userapi.model.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.net.URL
@@ -17,20 +15,32 @@ private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 @Service
 class AltinnAdapter(private val hostProperties: HostProperties) {
 
-    private fun getReportees(socialSecurityNumber: String): List<AltinnSubject?> {
-        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=4814&serviceedition=1&\$top=1000")
+    private fun getReportees(socialSecurityNumber: String, serviceCode: String): List<AltinnSubject?> {
+        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
         return try {
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
-            logger.error("Unable to get reportees from Altinn", Exception("Unable to get reportees from Altinn"))
+            logger.error("Unable to get reportees from Altinn", ex)
             emptyList()
         }
     }
 
-    fun getPerson(socialSecurityNumber: String): AltinnPerson? {
-        val reportees = getReportees(socialSecurityNumber)
+    fun getPerson(socialSecurityNumber: String, serviceCode: String): AltinnPerson? {
+        val reportees = getReportees(socialSecurityNumber, serviceCode)
+            .filterNotNull()
+
         return extractPersonSubject(socialSecurityNumber, reportees)
             ?.toPerson(extractOrganizations(reportees))
+    }
+
+    fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? {
+        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}")
+        return try {
+            jacksonObjectMapper().readValue(url)
+        } catch (ex: Exception) {
+            logger.error("Unable to get rights from Altinn", ex)
+            null
+        }
     }
 
     companion object {
