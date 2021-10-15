@@ -29,12 +29,13 @@ class Authorities : WiremockContext() {
         }
 
         @Test
-        fun respondWithNotFoundWhenNotFoundInAltinn() {
+        fun respondWithEmptyAuthStringWhenNotFoundInAltinn() {
             val response = apiGet(
                 path = "/authorities/altinn/12345678901",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
-            assertEquals(HttpStatus.NOT_FOUND.value(), response["status"])
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("", response["body"])
         }
 
         @Test
@@ -44,7 +45,7 @@ class Authorities : WiremockContext() {
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:920210023:admin,system:root:admin", response["body"])
+            assertEquals("system:root:admin,organization:920210023:admin", response["body"])
         }
 
         @Test

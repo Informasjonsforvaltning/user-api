@@ -1,9 +1,6 @@
 package no.fdk.userapi.mapper
 
-import no.fdk.userapi.model.AltinnOrganization
-import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.AltinnSubject
-import no.fdk.userapi.model.UserFDK
+import no.fdk.userapi.model.*
 
 fun AltinnPerson.toUserFDK(): UserFDK? {
     val names: List<String> = name
@@ -36,3 +33,19 @@ fun AltinnSubject.toOrganization(): AltinnOrganization =
 
 fun isPid(username: String): Boolean =
     username.matches("^\\d{11}$".toRegex())
+
+fun AltinnRightsResponse.toFDKRoles(): List<RoleFDK> =
+    if (reportee.organizationNumber != null) {
+        rights.mapNotNull {
+            serviceCodeToRole(it.serviceCode)
+                ?.let { role -> RoleFDK(RoleFDK.ResourceType.Organization, reportee.organizationNumber, role) }
+        }
+    } else emptyList()
+
+private fun serviceCodeToRole(serviceCode: String?): RoleFDK.Role? =
+    when(serviceCode) {
+        null -> null
+        "5755" -> RoleFDK.Role.Admin
+        "5756" -> RoleFDK.Role.Read
+        else -> null
+    }
