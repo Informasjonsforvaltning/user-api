@@ -3,6 +3,7 @@ package no.fdk.userapi.controller
 import no.fdk.userapi.mapper.isPid
 import no.fdk.userapi.mapper.mapAuthoritiesFromDifiRole
 import no.fdk.userapi.mapper.mapAuthoritiesFromOK
+import no.fdk.userapi.service.AltinnAuthActivity
 import no.fdk.userapi.service.AltinnUserService
 import no.fdk.userapi.service.EndpointPermissions
 import org.slf4j.LoggerFactory
@@ -20,7 +21,7 @@ private val logger = LoggerFactory.getLogger(AuthoritiesController::class.java)
 @RestController
 @RequestMapping(value = ["/authorities"])
 class AuthoritiesController (
-    private val altinnUserService: AltinnUserService,
+    private val altinnUserService: AltinnAuthActivity,
     private val endpointPermissions: EndpointPermissions
 ) {
 
@@ -29,11 +30,7 @@ class AuthoritiesController (
         when {
             !endpointPermissions.isFromFDKCluster(httpServletRequest) -> ResponseEntity(HttpStatus.FORBIDDEN)
             !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
-            else -> {
-                altinnUserService.getAuthorities(id)
-                    ?.let { ResponseEntity(it, HttpStatus.OK) }
-                    ?: ResponseEntity(HttpStatus.NOT_FOUND)
-            }
+            else -> ResponseEntity(altinnUserService.getAuthorities(id), HttpStatus.OK)
         }
 
     @GetMapping(value = ["/difi"])
