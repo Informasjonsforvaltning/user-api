@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(
@@ -45,7 +46,9 @@ class Authorities : WiremockContext() {
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("system:root:admin,organization:920210023:admin", response["body"])
+            val body: String = response["body"] as String
+            assertTrue { body.contains("system:root:admin") }
+            assertTrue { body.contains("organization:920210023:admin") }
         }
 
         @Test
@@ -55,7 +58,9 @@ class Authorities : WiremockContext() {
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:910258028:admin,organization:123456789:admin", response["body"])
+            val body: String = response["body"] as String
+            assertTrue { body.contains("organization:910258028:admin") }
+            assertTrue { body.contains("organization:123456789:admin") }
         }
 
     }
@@ -89,7 +94,10 @@ class Authorities : WiremockContext() {
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:123456789:admin,system:root:admin,organization:910258028:read", response["body"])
+            val body: String = response["body"] as String
+            assertTrue { body.contains("organization:123456789:admin") }
+            assertTrue { body.contains("system:root:admin") }
+            assertTrue { body.contains("organization:910258028:read") }
         }
 
         @Test
