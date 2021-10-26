@@ -39,4 +39,11 @@ class AltinnAuthActivity(
         return runBlocking { rightsTasks.flatMap { it.await() } }
     }
 
+    fun getOrganizationsforTerms(ssn: String): List<AltinnOrganization> {
+        val getUserTasks = mutableListOf(async { altinnUserService.deprecatedGetUser(ssn) })
+        NEW_SERVICE_CODES.forEach { getUserTasks.add(async { altinnUserService.getUser(ssn, it) }) }
+
+        return runBlocking { getUserTasks.map { it.await() }.flatMap { it?.organizations ?: emptyList() } }
+    }
+
 }
