@@ -19,9 +19,11 @@ class AltinnUserService (
     private val altinnAdapter: AltinnAdapter
 ) {
 
-    fun getUser(id: String): AltinnPerson? {
-        // Currently we only fetch one role association from Altinn
-        // and we interpret it as publisher admin role in fdk system
+    fun getUser(id: String, serviceCode: String): AltinnPerson? =
+        altinnAdapter.getPerson(id, serviceCode)
+
+    @Deprecated("user from old service code")
+    fun deprecatedGetUser(id: String): AltinnPerson? {
         return altinnAdapter.getPerson(id, OLD_SERVICE_CODE)
     }
 

@@ -7,15 +7,13 @@ import org.springframework.stereotype.Service
 @Service
 class TermsService(
     private val termsAdapter: TermsAdapter,
-    private val altinnUserService: AltinnUserService
+    private val altinnAuthActivity: AltinnAuthActivity
 ) {
 
     fun getOrgTermsAltinn(id: String): String =
-        altinnUserService.getUser(id)
-            ?.organizations
-            ?.mapNotNull { it.organizationNumber }
-            ?.joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
-            ?: ""
+        altinnAuthActivity.getOrganizationsforTerms(id)
+            .mapNotNull { it.organizationNumber }
+            .joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
 
     fun getOrgTermsDifi(orgs: List<String>): String =
         orgs.joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }

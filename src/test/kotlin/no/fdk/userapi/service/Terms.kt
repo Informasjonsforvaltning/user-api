@@ -14,8 +14,8 @@ import kotlin.test.assertEquals
 @Tag("unit")
 class Terms {
     private val termsAdapter: TermsAdapter = mock()
-    private val altinnUserService: AltinnUserService = mock()
-    private val termsService = TermsService(termsAdapter, altinnUserService)
+    private val altinnAuthActivity: AltinnAuthActivity = mock()
+    private val termsService = TermsService(termsAdapter, altinnAuthActivity)
 
     @Nested
     internal inner class AltinnTerms {
@@ -24,8 +24,8 @@ class Terms {
         fun orgHasNotAccepted() {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnUserService.getUser(person.socialSecurityNumber!!))
-                .thenReturn(person)
+            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+                .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("0.0.0")
 
@@ -38,8 +38,8 @@ class Terms {
         fun orgHasAccepted() {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnUserService.getUser(person.socialSecurityNumber!!))
-                .thenReturn(person)
+            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+                .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("1.2.3")
 
@@ -58,7 +58,8 @@ class Terms {
                 name = "First Last",
                 organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
 
-            whenever(altinnUserService.getUser(person.socialSecurityNumber!!)).thenReturn(person)
+            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+                .thenReturn(person.organizations)
 
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!)).thenReturn("1.2.3")
             whenever(termsAdapter.orgAcceptedTermsVersion(orgNotAccepted.organizationNumber!!)).thenReturn("0.0.0")
