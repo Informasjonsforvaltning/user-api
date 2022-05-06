@@ -18,7 +18,11 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
     private fun getReportees(socialSecurityNumber: String, serviceCode: String): List<AltinnSubject?> {
         val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
         return try {
-            jacksonObjectMapper().readValue(url)
+            val subjects: List<AltinnSubject?> = jacksonObjectMapper().readValue(url)
+
+            subjects.forEach { logger.debug("altinn subject for serviceCode $serviceCode: $it") }
+
+            subjects
         } catch (ex: Exception) {
             logger.error("Unable to get reportees from Altinn", ex)
             emptyList()
@@ -29,6 +33,8 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         val reportees = getReportees(socialSecurityNumber, serviceCode)
             .filterNotNull()
 
+        reportees.forEach { logger.debug("altinn reportee for serviceCode $serviceCode: $it") }
+
         return extractPersonSubject(socialSecurityNumber, reportees)
             ?.toPerson(extractOrganizations(reportees))
     }
@@ -36,7 +42,11 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
     fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? {
         val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}")
         return try {
-            jacksonObjectMapper().readValue(url)
+            val rightsResponse: AltinnRightsResponse? = jacksonObjectMapper().readValue(url)
+
+            logger.debug("altinn rights response for org $orgNumber: $rightsResponse")
+
+            rightsResponse
         } catch (ex: Exception) {
             logger.error("Unable to get rights from Altinn", ex)
             null
