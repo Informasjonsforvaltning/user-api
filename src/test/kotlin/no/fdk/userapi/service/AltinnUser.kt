@@ -66,12 +66,12 @@ class AltinnUser {
                 AltinnSubject(
                     name = person.name, socialSecurityNumber = ssn),
                     reportee = AltinnReportee(name = ORG.name, organizationNumber = ORG.organizationNumber),
-                    rights = listOf(AltinnRights(serviceCode = "4814")
+                    rights = listOf(AltinnRights(serviceCode = "5755")
                 )
             )
 
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
-            whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(null)
+            whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
             assertEquals(orgAdmin(ORG.organizationNumber!!), altinnAuthActivity.getAuthorities(ssn))
         }
@@ -87,11 +87,9 @@ class AltinnUser {
                 name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID"
             )
 
-            whenever(altinnAdapter.getPerson(ssn2, "4814")).thenReturn(AltinnPerson("First2 Last2", ssn2, listOf(ORG)))
             whenever(altinnAdapter.getPerson(ssn1, "5755")).thenReturn(AltinnPerson("First1 Last1", ssn1, listOf(orgNotInOrgNrWhitelist)))
             whenever(altinnAdapter.getPerson(ssn2, "5756")).thenReturn(AltinnPerson("First2 Last2", ssn2, listOf(orgNotInOrgFormWhitelist)))
 
-            whenever(altinnAdapter.getRights(ssn2, ORG.organizationNumber!!)).thenReturn(null)
             whenever(altinnAdapter.getRights(ssn1, orgNotInOrgNrWhitelist.organizationNumber!!)).thenReturn(
                 AltinnRightsResponse(
                     AltinnSubject(name = "First1 Last1", socialSecurityNumber = ssn1),
@@ -112,7 +110,6 @@ class AltinnUser {
             assertTrue { auth1.contains(orgRead(orgNotInOrgNrWhitelist.organizationNumber!!)) }
 
             val auth2 = altinnAuthActivity.getAuthorities(ssn2)
-            assertTrue { auth2.contains(orgAdmin(ORG.organizationNumber!!)) }
             assertTrue { auth2.contains(orgAdmin(orgNotInOrgFormWhitelist.organizationNumber!!)) }
         }
 

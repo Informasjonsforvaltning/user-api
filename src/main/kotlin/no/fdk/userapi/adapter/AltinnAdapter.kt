@@ -15,8 +15,8 @@ private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 @Service
 class AltinnAdapter(private val hostProperties: HostProperties) {
 
-    private fun getReportees(socialSecurityNumber: String, serviceCode: String): List<AltinnSubject?> {
-        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
+    private fun getReportees(socialSecurityNumber: String, serviceCode: String?): List<AltinnSubject?> {
+        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber${serviceCode?.let { "&servicecode=$it" } ?: ""}&serviceedition=1&\$top=1000")
         return try {
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
@@ -25,7 +25,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         }
     }
 
-    fun getPerson(socialSecurityNumber: String, serviceCode: String): AltinnPerson? {
+    fun getPerson(socialSecurityNumber: String, serviceCode: String?): AltinnPerson? {
         val reportees = getReportees(socialSecurityNumber, serviceCode)
             .filterNotNull()
 
@@ -33,15 +33,14 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
             ?.toPerson(extractOrganizations(reportees))
     }
 
-    fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? {
-        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27")
-        return try {
+    fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? =
+        try {
+            val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27")
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
             logger.error("Unable to get rights from Altinn", ex)
             null
         }
-    }
 
     companion object {
         private fun extractPersonSubject(socialSecurityNumber: String, reportees: List<AltinnSubject?>): AltinnSubject? =

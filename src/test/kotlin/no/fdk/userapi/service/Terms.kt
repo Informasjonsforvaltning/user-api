@@ -24,7 +24,7 @@ class Terms {
         fun orgHasNotAccepted() {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("0.0.0")
@@ -38,7 +38,7 @@ class Terms {
         fun orgHasAccepted() {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("1.2.3")
@@ -58,7 +58,7 @@ class Terms {
                 name = "First Last",
                 organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
 
-            whenever(altinnAuthActivity.getOrganizationsforTerms(person.socialSecurityNumber!!))
+            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
 
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!)).thenReturn("1.2.3")

@@ -16,13 +16,12 @@ class AltinnAuthActivity(
         val resourceRoleTokens: MutableList<String> = mutableListOf()
         val authTasks = listOf(
             async { organizationAuthorities(ssn) },
-            async { altinnUserService.deprecatedGetPersonAuthorities(ssn) },
             async { altinnUserService.getSysAdminAuthorities(ssn) }
         )
 
         runBlocking { authTasks.forEach { resourceRoleTokens.addAll(it.await()) } }
 
-        return resourceRoleTokens.joinToString(",")
+        return resourceRoleTokens.distinct().joinToString(",")
     }
 
     private fun allOrganizations(ssn: String): List<AltinnOrganization> {
@@ -39,9 +38,8 @@ class AltinnAuthActivity(
         return runBlocking { rightsTasks.flatMap { it.await() } }
     }
 
-    fun getOrganizationsforTerms(ssn: String): List<AltinnOrganization> {
-        val getUserTasks = mutableListOf(async { altinnUserService.deprecatedGetUser(ssn) })
-        NEW_SERVICE_CODES.forEach { getUserTasks.add(async { altinnUserService.getUser(ssn, it) }) }
+    fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
+        val getUserTasks = NEW_SERVICE_CODES.map { async { altinnUserService.getUser(ssn, it) } }
 
         return runBlocking { getUserTasks.map { it.await() }.flatMap { it?.organizations ?: emptyList() } }
     }

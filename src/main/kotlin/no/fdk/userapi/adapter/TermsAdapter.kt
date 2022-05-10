@@ -27,10 +27,9 @@ class TermsAdapter(
                         return it.readText()
                     }
                 } else if (HttpStatus.resolve(responseCode) == HttpStatus.NOT_FOUND) {
-                    logger.warn("Accepted terms version not found for $organization")
                     return "0.0.0"
                 } else {
-                    logger.error("Unable to get accepted terms version for $organization. Response code: $responseCode")
+                    logger.error("Unable to get accepted terms version for $organization. Response code: $responseCode", Exception())
                     return "0.0.0"
                 }
             }

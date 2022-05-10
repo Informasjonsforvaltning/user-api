@@ -89,7 +89,7 @@ val ALTINN_RIGHTS_0 = """
             {
                 "RightID": 1018549,
                 "RightType": "Service",
-                "ServiceCode": "4814",
+                "ServiceCode": "5755",
                 "ServiceEditionCode": 20,
                 "Action": "Read",
                 "RightSourceType": "RoleTypeRights",
@@ -116,7 +116,7 @@ val ALTINN_RIGHTS_1 = """
             {
                 "RightID": 1018548,
                 "RightType": "Service",
-                "ServiceCode": "4814",
+                "ServiceCode": "5755",
                 "ServiceEditionCode": 20,
                 "Action": "Read",
                 "RightSourceType": "RoleTypeRights",
@@ -143,7 +143,7 @@ val ALTINN_RIGHTS_2 = """
             {
                 "RightID": 1018547,
                 "RightType": "Service",
-                "ServiceCode": "4814",
+                "ServiceCode": "5756",
                 "ServiceEditionCode": 20,
                 "Action": "Read",
                 "RightSourceType": "RoleTypeRights",
