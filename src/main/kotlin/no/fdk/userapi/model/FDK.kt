@@ -30,4 +30,17 @@ class RoleFDK (
         val ROOT_ADMIN = RoleFDK(ResourceType.System, "root", Role.Admin)
     }
 
+    override fun equals(other: Any?): Boolean =
+        other is RoleFDK
+            && resourceType == other.resourceType
+            && resourceId == other.resourceId
+            && role == other.role
+
+    override fun hashCode(): Int {
+        var result = resourceType.hashCode()
+        result = 31 * result + resourceId.hashCode()
+        result = 31 * result + role.hashCode()
+        return result
+    }
+
 }
