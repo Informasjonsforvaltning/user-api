@@ -39,7 +39,7 @@ fun AltinnRightsResponse.toFDKRoles(): List<RoleFDK> =
         rights.mapNotNull {
             serviceCodeToRole(it.serviceCode)
                 ?.let { role -> RoleFDK(RoleFDK.ResourceType.Organization, reportee.organizationNumber, role) }
-        }
+        }.distinct()
     } else emptyList()
 
 private fun serviceCodeToRole(serviceCode: String?): RoleFDK.Role? =
