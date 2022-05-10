@@ -26,7 +26,7 @@ class UsersController (
         when {
             !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
             else -> {
-                altinnUserService.deprecatedGetUser(id)
+                altinnUserService.getUser(id, null)
                     ?.toUserFDK()
                     ?.let { ResponseEntity(it, HttpStatus.OK) }
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)

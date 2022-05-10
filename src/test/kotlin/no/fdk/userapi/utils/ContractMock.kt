@@ -18,13 +18,28 @@ fun startMockServer() {
                 .willReturn(aResponse().withStatus(200)))
 
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=12345678901&servicecode=4814&serviceedition=1&\$top=1000"))
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=12345678901&servicecode=5755&serviceedition=1&\$top=1000"))
                 .willReturn(aResponse().withStatus(404)))
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=4814&serviceedition=1&\$top=1000"))
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=12345678901&servicecode=5756&serviceedition=1&\$top=1000"))
+                .willReturn(aResponse().withStatus(404)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&serviceedition=1&\$top=1000"))
                 .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_0)))
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&servicecode=4814&serviceedition=1&\$top=1000"))
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=5755&serviceedition=1&\$top=1000"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_0)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=5756&serviceedition=1&\$top=1000"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_0)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&serviceedition=1&\$top=1000"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_1)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&servicecode=5755&serviceedition=1&\$top=1000"))
+                .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_1)))
+        mockserver.stubFor(
+            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&servicecode=5756&serviceedition=1&\$top=1000"))
                 .willReturn(aResponse().withStatus(200).withBody(ALTINN_PERSON_1)))
 
         mockserver.stubFor(

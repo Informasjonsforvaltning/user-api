@@ -60,7 +60,7 @@ class Authorities : WiremockContext() {
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
             assertTrue { body.contains("organization:910258028:admin") }
-            assertTrue { body.contains("organization:123456789:admin") }
+            assertTrue { body.contains("organization:123456789:read") }
         }
 
     }

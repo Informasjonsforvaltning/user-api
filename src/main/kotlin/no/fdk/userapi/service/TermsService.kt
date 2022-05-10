@@ -11,8 +11,9 @@ class TermsService(
 ) {
 
     fun getOrgTermsAltinn(id: String): String =
-        altinnAuthActivity.getOrganizationsforTerms(id)
+        altinnAuthActivity.getOrganizationsForTerms(id)
             .mapNotNull { it.organizationNumber }
+            .distinct()
             .joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
 
     fun getOrgTermsDifi(orgs: List<String>): String =
