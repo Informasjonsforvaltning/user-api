@@ -5,7 +5,7 @@ import no.fdk.userapi.model.AltinnOrganization
 import org.springframework.stereotype.Component
 import java.util.concurrent.Executors
 
-private val NEW_SERVICE_CODES = listOf("5755", "5756")
+val SERVICE_CODES = listOf("5755", "5756")
 
 @Component
 class AltinnAuthActivity(
@@ -25,7 +25,7 @@ class AltinnAuthActivity(
     }
 
     private fun allOrganizations(ssn: String): List<AltinnOrganization> {
-        val orgTasks = NEW_SERVICE_CODES.map {
+        val orgTasks = SERVICE_CODES.map {
             async { altinnUserService.organizationsForService(ssn, it) }
         }
         return runBlocking { orgTasks.flatMap { it.await() } }
@@ -39,7 +39,7 @@ class AltinnAuthActivity(
     }
 
     fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
-        val getUserTasks = NEW_SERVICE_CODES.map { async { altinnUserService.getUser(ssn, it) } }
+        val getUserTasks = SERVICE_CODES.map { async { altinnUserService.getUser(ssn, it) } }
 
         return runBlocking { getUserTasks.map { it.await() }.flatMap { it?.organizations ?: emptyList() } }
     }

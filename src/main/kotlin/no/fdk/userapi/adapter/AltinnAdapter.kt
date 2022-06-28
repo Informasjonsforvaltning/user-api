@@ -15,8 +15,8 @@ private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 @Service
 class AltinnAdapter(private val hostProperties: HostProperties) {
 
-    private fun getReportees(socialSecurityNumber: String, serviceCode: String?): List<AltinnSubject?> {
-        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber${serviceCode?.let { "&servicecode=$it" } ?: ""}&serviceedition=1&\$top=1000")
+    private fun getReportees(socialSecurityNumber: String, serviceCode: String): List<AltinnSubject?> {
+        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
         return try {
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
@@ -25,7 +25,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         }
     }
 
-    fun getPerson(socialSecurityNumber: String, serviceCode: String?): AltinnPerson? {
+    fun getPerson(socialSecurityNumber: String, serviceCode: String): AltinnPerson? {
         val reportees = getReportees(socialSecurityNumber, serviceCode)
             .filterNotNull()
 

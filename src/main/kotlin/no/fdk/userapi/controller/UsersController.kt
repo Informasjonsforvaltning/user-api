@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import no.fdk.userapi.mapper.toUserFDK
+import no.fdk.userapi.service.SERVICE_CODES
 import org.springframework.web.bind.annotation.GetMapping
 
 @RestController
@@ -26,7 +27,7 @@ class UsersController (
         when {
             !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
             else -> {
-                altinnUserService.getUser(id, null)
+                altinnUserService.getUser(id, SERVICE_CODES.first())
                     ?.toUserFDK()
                     ?.let { ResponseEntity(it, HttpStatus.OK) }
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
