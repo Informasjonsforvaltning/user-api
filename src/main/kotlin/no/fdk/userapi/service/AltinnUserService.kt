@@ -13,7 +13,7 @@ class AltinnUserService (
     private val altinnAdapter: AltinnAdapter
 ) {
 
-    fun getUser(id: String, serviceCode: String?): AltinnPerson? =
+    fun getUser(id: String, serviceCode: String): AltinnPerson? =
         altinnAdapter.getPerson(id, serviceCode)
 
     fun getSysAdminAuthorities(id: String): List<String> =
