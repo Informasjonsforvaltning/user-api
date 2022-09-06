@@ -49,8 +49,17 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         private fun extractOrganizations(reportees: List<AltinnSubject?>): List<AltinnOrganization> {
             return reportees
                 .filterNotNull()
-                .filter { it.type == "Enterprise" }
+                .filter { includeReporteeAsOrganization(it.type) }
                 .map { it.toOrganization() }
         }
+
+        private fun includeReporteeAsOrganization(reporteeType: String?): Boolean =
+            when (reporteeType) {
+                null -> false
+                AltinnReporteeType.Person.name -> false
+                AltinnReporteeType.Enterprise.name -> true
+                AltinnReporteeType.Business.name -> true
+                else -> false
+            }
     }
 }

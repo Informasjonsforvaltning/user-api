@@ -26,9 +26,9 @@ class AltinnUserService (
             person.organizations
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
                 .filter { org: AltinnOrganization ->
-                    // Organizations should either have an acceptable organization form or be specifically allowed through orgNrWhitelist
-                    whitelists.orgNrWhitelist.contains(org.organizationNumber)
-                            || whitelists.orgFormWhitelist.contains(org.organizationForm)
+                    // Organizations should either have an acceptable organization form
+                    // or be specifically allowed through orgNrWhitelist
+                    isWhitelistedOrgNumber(org) || isWhitelistedOrgForm(org)
                 }
         } else emptyList()
     }
@@ -37,5 +37,16 @@ class AltinnUserService (
         altinnAdapter.getRights(ssn, org.organizationNumber!!)
             .let { response -> response?.toFDKRoles() ?: emptyList() }
             .map { obj: RoleFDK -> obj.toString() }
+
+    private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
+        org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
+
+    private fun isWhitelistedOrgForm(org: AltinnOrganization) =
+        when {
+            org.type != AltinnReporteeType.Enterprise -> false
+            org.organizationForm == null -> false
+            whitelists.orgFormWhitelist.contains(org.organizationForm) -> true
+            else -> false
+        }
 
 }

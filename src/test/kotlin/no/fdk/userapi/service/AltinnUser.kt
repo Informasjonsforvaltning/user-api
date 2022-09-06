@@ -73,7 +73,7 @@ class AltinnUser {
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
             whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
-            assertEquals(orgAdmin(ORG.organizationNumber!!), altinnAuthActivity.getAuthorities(ssn))
+            assertEquals(orgAdmin(ORG.organizationNumber as String), altinnAuthActivity.getAuthorities(ssn))
         }
 
         @Test
@@ -81,10 +81,10 @@ class AltinnUser {
             val ssn1 = "23076102252"
             val ssn2 = "12345678901"
             val orgNotInOrgNrWhitelist = AltinnOrganization(
-                name = "Not in orgnr list", organizationNumber = "987654321", organizationForm = "STAT"
+                name = "Not in orgnr list", organizationNumber = "987654321", organizationForm = "STAT", type = AltinnReporteeType.Enterprise
             )
             val orgNotInOrgFormWhitelist = AltinnOrganization(
-                name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID"
+                name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise
             )
 
             whenever(altinnAdapter.getPerson(ssn1, "5755")).thenReturn(AltinnPerson("First1 Last1", ssn1, listOf(orgNotInOrgNrWhitelist)))
@@ -107,10 +107,57 @@ class AltinnUser {
 
             val auth1 = altinnAuthActivity.getAuthorities(ssn1)
             assertTrue { auth1.contains(SYS_ADMIN) }
-            assertTrue { auth1.contains(orgRead(orgNotInOrgNrWhitelist.organizationNumber!!)) }
+            assertTrue { auth1.contains(orgRead(orgNotInOrgNrWhitelist.organizationNumber as String)) }
 
             val auth2 = altinnAuthActivity.getAuthorities(ssn2)
-            assertTrue { auth2.contains(orgAdmin(orgNotInOrgFormWhitelist.organizationNumber!!)) }
+            assertTrue { auth2.contains(orgAdmin(orgNotInOrgFormWhitelist.organizationNumber as String)) }
+        }
+
+    }
+    @Nested
+    internal inner class PersonOrganizations {
+
+        @Test
+        fun personNotFoundReturnsEmptyList() {
+            val ssn = "12345678901"
+            whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
+            assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
+        }
+
+        @Test
+        fun handlesEmptyOrgList() {
+            val ssn = "12345678901"
+            whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
+            assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
+        }
+
+        @Test
+        fun whitelistedSubOrgIsIncluded() {
+            val ssn = "12345678901"
+            val org = AltinnOrganization(
+                name = "Org", organizationNumber = "123456789", organizationForm = "STAT", type = AltinnReporteeType.Enterprise
+            )
+            val subOrg0 = AltinnOrganization(
+                name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
+            )
+            val subOrg1 = AltinnOrganization(
+                name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Business
+            )
+            whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
+            assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn, "5755"))
+        }
+
+        @Test
+        fun subOrgOfNonWhitelistedIsStillIncluded() {
+            val ssn = "12345678901"
+            val org = AltinnOrganization(
+                name = "Org", organizationNumber = "987654321", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise
+            )
+            val subOrg = AltinnOrganization(
+                name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
+            )
+            whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
+            assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn, "5755"))
         }
 
     }

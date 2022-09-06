@@ -1,6 +1,7 @@
 package no.fdk.userapi.utils
 
 import no.fdk.userapi.model.AltinnOrganization
+import no.fdk.userapi.model.AltinnReporteeType
 
 const val LOCAL_SERVER_PORT = 5000
 const val API_TEST_PORT = 5050
@@ -22,7 +23,8 @@ fun orgRead(orgNr: String) = "organization:$orgNr:read"
 val ORG: AltinnOrganization = AltinnOrganization(
     name = "Organization Name",
     organizationForm = "ORGL",
-    organizationNumber = "920210023"
+    organizationNumber = "920210023",
+    type = AltinnReporteeType.Enterprise
 )
 
 val ORG_NR_LIST = listOf("920210023", "910258028", "123456789")

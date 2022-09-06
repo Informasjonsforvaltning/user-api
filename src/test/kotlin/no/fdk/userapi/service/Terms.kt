@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import no.fdk.userapi.adapter.TermsAdapter
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
+import no.fdk.userapi.model.AltinnReporteeType
 import no.fdk.userapi.utils.ORG
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
@@ -29,7 +30,7 @@ class Terms {
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("0.0.0")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber!!)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
 
             assertEquals("${ORG.organizationNumber}:0.0.0", response)
         }
@@ -43,15 +44,15 @@ class Terms {
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("1.2.3")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber!!)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
 
             assertEquals("${ORG.organizationNumber}:1.2.3", response)
         }
 
         @Test
         fun severalOrgs() {
-            val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789")
-            val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321")
+            val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Enterprise)
+            val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Enterprise)
 
             val person = AltinnPerson(
                 socialSecurityNumber = "23076102252",
@@ -65,7 +66,7 @@ class Terms {
             whenever(termsAdapter.orgAcceptedTermsVersion(orgNotAccepted.organizationNumber!!)).thenReturn("0.0.0")
             whenever(termsAdapter.orgAcceptedTermsVersion(orgAcceptedOld.organizationNumber!!)).thenReturn("1.0.0")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber!!)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
 
             val expected = "${ORG.organizationNumber}:1.2.3,${orgNotAccepted.organizationNumber}:0.0.0,${orgAcceptedOld.organizationNumber}:1.0.0"
 
