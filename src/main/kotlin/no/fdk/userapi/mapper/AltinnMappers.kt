@@ -28,7 +28,8 @@ fun AltinnSubject.toOrganization(): AltinnOrganization =
     AltinnOrganization(
         name,
         organizationForm,
-        organizationNumber
+        organizationNumber,
+        type = typeStringToOrgType(type)
     )
 
 fun isPid(username: String): Boolean =
@@ -47,5 +48,13 @@ private fun serviceCodeToRole(serviceCode: String?): RoleFDK.Role? =
         null -> null
         "5755" -> RoleFDK.Role.Admin
         "5756" -> RoleFDK.Role.Read
+        else -> null
+    }
+
+private fun typeStringToOrgType(type: String?): AltinnReporteeType? =
+    when(type) {
+        null -> null
+        AltinnReporteeType.Enterprise.name -> AltinnReporteeType.Enterprise
+        AltinnReporteeType.Business.name -> AltinnReporteeType.Business
         else -> null
     }

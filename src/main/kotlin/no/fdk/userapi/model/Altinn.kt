@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class AltinnOrganization (
     val name: String?,
     val organizationForm: String?,
-    val organizationNumber: String?
+    val organizationNumber: String?,
+    val type: AltinnReporteeType?
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -73,3 +74,7 @@ data class AltinnRights (
     @JsonProperty("ServiceEditionCode")
     val serviceEditionCode: String? = null
 )
+
+enum class AltinnReporteeType {
+    Business, Enterprise, Person
+}
