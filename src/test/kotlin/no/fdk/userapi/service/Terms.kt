@@ -32,7 +32,7 @@ class Terms {
 
             val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
 
-            assertEquals("${ORG.organizationNumber}:0.0.0", response)
+            assertEquals("", response)
         }
 
         @Test
@@ -68,7 +68,7 @@ class Terms {
 
             val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
 
-            val expected = "${ORG.organizationNumber}:1.2.3,${orgNotAccepted.organizationNumber}:0.0.0,${orgAcceptedOld.organizationNumber}:1.0.0"
+            val expected = "${ORG.organizationNumber}:1.2.3,${orgAcceptedOld.organizationNumber}:1.0.0"
 
             assertEquals(expected, response)
         }
@@ -83,7 +83,7 @@ class Terms {
             val orgNr = "123456789"
             whenever(termsAdapter.orgAcceptedTermsVersion(orgNr)).thenReturn("0.0.0")
 
-            assertEquals("$orgNr:0.0.0", termsService.getOrgTermsDifi(listOf(orgNr)))
+            assertEquals("", termsService.getOrgTermsDifi(listOf(orgNr)))
         }
 
         @Test
@@ -105,7 +105,7 @@ class Terms {
 
             val response = termsService.getOrgTermsDifi(listOf(org0, org1, org2))
 
-            assertEquals("$org0:1.2.3,$org1:0.0.0,$org2:1.0.0", response)
+            assertEquals("$org0:1.2.3,$org2:1.0.0", response)
         }
 
     }
@@ -118,7 +118,7 @@ class Terms {
             val org = Pair("Oslo Havn KF", "987592567")
             whenever(termsAdapter.orgAcceptedTermsVersion(org.second)).thenReturn("0.0.0")
 
-            assertEquals("${org.second}:0.0.0", termsService.getOrgTermsOk(listOf(org.first)))
+            assertEquals("", termsService.getOrgTermsOk(listOf(org.first)))
         }
 
         @Test
@@ -140,7 +140,7 @@ class Terms {
 
             val response = termsService.getOrgTermsOk(listOf(org0.first, org1.first, org2.first))
 
-            assertEquals("${org0.second}:1.2.3,${org1.second}:0.0.0,${org2.second}:1.0.0", response)
+            assertEquals("${org0.second}:1.2.3,${org2.second}:1.0.0", response)
         }
 
     }

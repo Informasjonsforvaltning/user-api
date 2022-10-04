@@ -12,15 +12,28 @@ class TermsService(
 
     fun getOrgTermsAltinn(id: String): String =
         altinnAuthActivity.getOrganizationsForTerms(id)
+            .asSequence()
             .mapNotNull { it.organizationNumber }
             .distinct()
-            .joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
+            .map { Pair(it, termsAdapter.orgAcceptedTermsVersion(it)) }
+            .mapNotNull { it.toTermsString() }
+            .joinToString(",")
 
     fun getOrgTermsDifi(orgs: List<String>): String =
-        orgs.joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
+        orgs.distinct()
+            .map { Pair(it, termsAdapter.orgAcceptedTermsVersion(it)) }
+            .mapNotNull { it.toTermsString() }
+            .joinToString(",")
 
     fun getOrgTermsOk(orgNames: List<String>): String =
-        orgNames.mapNotNull { orgNameToNumber(it) }
-            .joinToString(",") { "$it:${termsAdapter.orgAcceptedTermsVersion(it)}" }
+        orgNames.asSequence()
+            .mapNotNull { orgNameToNumber(it) }
+            .distinct()
+            .map { Pair(it, termsAdapter.orgAcceptedTermsVersion(it)) }
+            .mapNotNull { it.toTermsString() }
+            .joinToString(",")
+
+    private fun Pair<String, String?>.toTermsString(): String? =
+        if (second != "0.0.0") "${first}:${second}" else null
 
 }
