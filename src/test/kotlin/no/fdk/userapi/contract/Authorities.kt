@@ -113,25 +113,25 @@ class Authorities : WiremockContext() {
     }
 
     @Nested
-    internal inner class OsloKommune {
+    internal inner class BRREG {
 
         @Test
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
-                path = "/authorities/oslokommune?roles=$OK_ADMIN&orgnames=Drift",
+                path = "/authorities/brreg",
                 headers = mapOf(Pair("X-API-KEY", "wrong-key")))
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
 
         @Test
-        fun orgRolesIgnoredWhenMissingOrgAssociations() {
+        fun respondWithFDKRole() {
             val response = apiGet(
-                path = "/authorities/oslokommune?roles=$OK_ADMIN,$OK_WRITE,$OK_READ&orgnames=Drift",
+                path = "/authorities/brreg",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:971183675:admin", response["body"])
+            assertEquals("organization:974760673:read", response["body"])
         }
 
     }

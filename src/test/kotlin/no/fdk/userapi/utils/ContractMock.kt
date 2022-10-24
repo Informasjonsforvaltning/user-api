@@ -71,6 +71,9 @@ fun startMockServer() {
         mockserver.stubFor(
             get(urlEqualTo("/terms/terms/org/923954791/version"))
                 .willReturn(aResponse().withStatus(200).withBody("12.16.11")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org/974760673/version"))
+                .willReturn(aResponse().withStatus(200).withBody("1.0.1")))
 
         mockserver.start()
     }
