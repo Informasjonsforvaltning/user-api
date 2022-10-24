@@ -20,6 +20,8 @@ application:
   secrets:
     ssoApiKey: ${SSO_API_KEY}
     userApiKey: ${USER_API_KEY}
+  brreg:
+    orgnr: ${ORGNR_BRREG:974760673}
 server:
   port: 8080
 

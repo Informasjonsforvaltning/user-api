@@ -3,6 +3,7 @@ package no.fdk.userapi.service
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import no.fdk.userapi.adapter.TermsAdapter
+import no.fdk.userapi.configuration.BRREGProperties
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
 import no.fdk.userapi.model.AltinnReporteeType
@@ -16,7 +17,8 @@ import kotlin.test.assertEquals
 class Terms {
     private val termsAdapter: TermsAdapter = mock()
     private val altinnAuthActivity: AltinnAuthActivity = mock()
-    private val termsService = TermsService(termsAdapter, altinnAuthActivity)
+    private val brregProperties: BRREGProperties = mock()
+    private val termsService = TermsService(termsAdapter, altinnAuthActivity, brregProperties)
 
     @Nested
     internal inner class AltinnTerms {
@@ -111,36 +113,22 @@ class Terms {
     }
 
     @Nested
-    internal inner class OsloKommuneTerms {
+    internal inner class BRREGTerms {
 
         @Test
         fun orgHasNotAccepted() {
-            val org = Pair("Oslo Havn KF", "987592567")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org.second)).thenReturn("0.0.0")
+            whenever(brregProperties.orgnr).thenReturn("974760673")
+            whenever(termsAdapter.orgAcceptedTermsVersion("974760673")).thenReturn("0.0.0")
 
-            assertEquals("", termsService.getOrgTermsOk(listOf(org.first)))
+            assertEquals("", termsService.getOrgTermsBRREG())
         }
 
         @Test
         fun orgHasAccepted() {
-            val org = Pair("Drift", "971183675")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org.second)).thenReturn("1.2.3")
+            whenever(brregProperties.orgnr).thenReturn("974760673")
+            whenever(termsAdapter.orgAcceptedTermsVersion("974760673")).thenReturn("1.2.3")
 
-            assertEquals("${org.second}:1.2.3", termsService.getOrgTermsOk(listOf(org.first)))
-        }
-
-        @Test
-        fun severalOrgs() {
-            val org0 = Pair("Drift", "971183675")
-            val org1 = Pair("Oslo Havn KF", "987592567")
-            val org2 = Pair("Renovasjons- og gjenvinningsetaten", "923954791")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org0.second)).thenReturn("1.2.3")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org1.second)).thenReturn("0.0.0")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org2.second)).thenReturn("1.0.0")
-
-            val response = termsService.getOrgTermsOk(listOf(org0.first, org1.first, org2.first))
-
-            assertEquals("${org0.second}:1.2.3,${org2.second}:1.0.0", response)
+            assertEquals("974760673:1.2.3", termsService.getOrgTermsBRREG())
         }
 
     }

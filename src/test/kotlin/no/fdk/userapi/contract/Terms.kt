@@ -87,35 +87,25 @@ class Terms : WiremockContext()  {
     }
 
     @Nested
-    internal inner class OsloKommune {
+    internal inner class BRREG {
 
         @Test
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
-                path = "/terms/oslokommune?orgnames=Drift",
+                path = "/terms/brreg",
                 headers = mapOf(Pair("X-API-KEY", "wrong-key")))
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
 
         @Test
-        fun respondWithVersionZeroWhenNoAcceptationFound() {
+        fun respondWithCorrectTerms() {
             val response = apiGet(
-                path = "/terms/oslokommune?orgnames=Drift",
+                path = "/terms/brreg",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("", response["body"])
-        }
-
-        @Test
-        fun checksAllGivenOrgs() {
-            val response = apiGet(
-                path = "/terms/oslokommune?orgnames=${java.net.URLEncoder.encode("Drift,Oslo Havn KF,Renovasjons- og gjenvinningsetaten", "utf-8")}",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
-
-            assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("987592567:1.0.1,923954791:12.16.11", response["body"])
+            assertEquals("974760673:1.0.1", response["body"])
         }
 
     }

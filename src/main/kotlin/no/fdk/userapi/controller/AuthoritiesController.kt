@@ -2,8 +2,8 @@ package no.fdk.userapi.controller
 
 import no.fdk.userapi.mapper.isPid
 import no.fdk.userapi.mapper.mapAuthoritiesFromDifiRole
-import no.fdk.userapi.mapper.mapAuthoritiesFromOK
 import no.fdk.userapi.service.AltinnAuthActivity
+import no.fdk.userapi.service.BRREGService
 import no.fdk.userapi.service.EndpointPermissions
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,8 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping(value = ["/authorities"])
 class AuthoritiesController (
     private val altinnUserService: AltinnAuthActivity,
-    private val endpointPermissions: EndpointPermissions
+    private val endpointPermissions: EndpointPermissions,
+    private val brregService: BRREGService
 ) {
 
     @GetMapping(value = ["/altinn/{id}"])
@@ -39,14 +40,10 @@ class AuthoritiesController (
             ResponseEntity(mapAuthoritiesFromDifiRole(roles, orgs), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
-    @GetMapping(value = ["/oslokommune"])
-    fun getOKAuthorities(
-        httpServletRequest: HttpServletRequest,
-        @RequestParam(value = "roles", required = true) roles: List<String>,
-        @RequestParam(value = "orgnames", required = true) orgNames: List<String>
-    ): ResponseEntity<String> {
+    @GetMapping(value = ["/brreg"])
+    fun getBRREGAuthorities(httpServletRequest: HttpServletRequest): ResponseEntity<String> {
         return if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
-            ResponseEntity(mapAuthoritiesFromOK(roles, orgNames), HttpStatus.OK)
+            ResponseEntity(brregService.getAuthorities(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
     }
 
