@@ -1,8 +1,8 @@
 package no.fdk.userapi.service
 
+import jakarta.servlet.http.HttpServletRequest
 import no.fdk.userapi.configuration.SecurityProperties
 import org.springframework.stereotype.Component
-import javax.servlet.http.HttpServletRequest
 
 @Component
 class EndpointPermissions(private val securityProperties: SecurityProperties) {
