@@ -7,14 +7,10 @@ import no.fdk.userapi.configuration.HostProperties
 import no.fdk.userapi.configuration.SecurityProperties
 import no.fdk.userapi.configuration.WhitelistProperties
 import org.springframework.boot.SpringApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 
 @SpringBootApplication
-@EnableConfigurationProperties(
-    BRREGProperties::class,
-    HostProperties::class,
-    SecurityProperties::class,
-    WhitelistProperties::class
-)
+@ConfigurationPropertiesScan
 open class UserApiApplication
 
 fun main(args: Array<String>) {
