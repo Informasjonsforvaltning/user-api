@@ -22,6 +22,8 @@ application:
     userApiKey: ${USER_API_KEY}
   brreg:
     orgnr: ${ORGNR_BRREG:974760673}
+    adminGroupID: ${ADMIN_GROUP_BRREG:123}
+    writeGroupID: ${WRITE_GROUP_BRREG:321}
 server:
   port: 8080
 

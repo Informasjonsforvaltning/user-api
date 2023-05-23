@@ -41,9 +41,12 @@ class AuthoritiesController (
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
     @GetMapping(value = ["/brreg"])
-    fun getBRREGAuthorities(httpServletRequest: HttpServletRequest): ResponseEntity<String> {
+    fun getBRREGAuthorities(
+        httpServletRequest: HttpServletRequest,
+        @RequestParam(value = "groups", required = true) groups: List<String>
+    ): ResponseEntity<String> {
         return if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
-            ResponseEntity(brregService.getAuthorities(), HttpStatus.OK)
+            ResponseEntity(brregService.getAuthorities(groups), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
     }
 
