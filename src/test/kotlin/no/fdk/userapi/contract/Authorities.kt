@@ -1,6 +1,7 @@
 package no.fdk.userapi.contract
 
 import no.fdk.userapi.utils.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -118,20 +119,30 @@ class Authorities : WiremockContext() {
         @Test
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
-                path = "/authorities/brreg",
+                path = "/authorities/brreg?groups=123",
                 headers = mapOf(Pair("X-API-KEY", "wrong-key")))
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
 
         @Test
-        fun respondWithFDKRole() {
+        fun respondWithAdminRole() {
             val response = apiGet(
-                path = "/authorities/brreg",
+                path = "/authorities/brreg?groups=123",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:974760673:read", response["body"])
+            assertEquals("organization:974760673:admin", response["body"])
+        }
+
+        @Test
+        fun respondWithWriteRole() {
+            val response = apiGet(
+                path = "/authorities/brreg?groups=321",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("organization:974760673:write", response["body"])
         }
 
     }

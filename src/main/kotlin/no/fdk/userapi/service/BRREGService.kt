@@ -9,8 +9,17 @@ class BRREGService(
     private val brregProperties: BRREGProperties
 ) {
 
-    fun getAuthorities(): String =
-        RoleFDK(RoleFDK.ResourceType.Organization, brregProperties.orgnr, RoleFDK.Role.Read)
-            .toString()
+    fun getAuthorities(groups: List<String>): String {
+        val role = when {
+            groups.contains(brregProperties.adminGroupID) -> RoleFDK.Role.Admin
+            groups.contains(brregProperties.writeGroupID) -> RoleFDK.Role.Write
+            else -> throw Exception("unauthorized brreg login")
+        }
+        return RoleFDK(
+            RoleFDK.ResourceType.Organization,
+            brregProperties.orgnr,
+            role
+        ).toString()
+    }
 
 }
