@@ -147,4 +147,48 @@ class Authorities : WiremockContext() {
 
     }
 
+    @Nested
+    internal inner class Skatt {
+
+        @Test
+        fun forbiddenWithWrongApiKey() {
+            val response = apiGet(
+                path = "/authorities/skatt?groups=123",
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+
+            assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
+        }
+
+        @Test
+        fun respondWithAdminRole() {
+            val response = apiGet(
+                path = "/authorities/skatt?groups=123",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("organization:974761076:admin", response["body"])
+        }
+
+        @Test
+        fun respondWithWriteRole() {
+            val response = apiGet(
+                path = "/authorities/skatt?groups=321",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("organization:974761076:write", response["body"])
+        }
+
+        @Test
+        fun respondWithReadRole() {
+            val response = apiGet(
+                path = "/authorities/skatt?groups=111",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("organization:974761076:read", response["body"])
+        }
+
+    }
+
 }

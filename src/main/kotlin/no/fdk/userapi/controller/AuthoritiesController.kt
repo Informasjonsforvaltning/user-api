@@ -6,6 +6,7 @@ import no.fdk.userapi.mapper.mapAuthoritiesFromDifiRole
 import no.fdk.userapi.service.AltinnAuthActivity
 import no.fdk.userapi.service.BRREGService
 import no.fdk.userapi.service.EndpointPermissions
+import no.fdk.userapi.service.SkattService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class AuthoritiesController (
     private val altinnUserService: AltinnAuthActivity,
     private val endpointPermissions: EndpointPermissions,
-    private val brregService: BRREGService
+    private val brregService: BRREGService,
+    private val skattService: SkattService
 ) {
 
     @GetMapping(value = ["/altinn/{id}"])
@@ -47,6 +49,16 @@ class AuthoritiesController (
     ): ResponseEntity<String> {
         return if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
             ResponseEntity(brregService.getAuthorities(groups), HttpStatus.OK)
+        } else ResponseEntity(HttpStatus.FORBIDDEN)
+    }
+
+    @GetMapping(value = ["/skatt"])
+    fun getSkattAuthorities(
+        httpServletRequest: HttpServletRequest,
+        @RequestParam(value = "groups", required = true) groups: List<String>
+    ): ResponseEntity<String> {
+        return if (endpointPermissions.isFromFDKCluster(httpServletRequest)) {
+            ResponseEntity(skattService.getAuthorities(groups), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
     }
 

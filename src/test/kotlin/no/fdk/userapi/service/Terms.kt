@@ -2,6 +2,7 @@ package no.fdk.userapi.service
 
 import no.fdk.userapi.adapter.TermsAdapter
 import no.fdk.userapi.configuration.BRREGProperties
+import no.fdk.userapi.configuration.SkattProperties
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
 import no.fdk.userapi.model.AltinnReporteeType
@@ -18,7 +19,8 @@ class Terms {
     private val termsAdapter: TermsAdapter = mock()
     private val altinnAuthActivity: AltinnAuthActivity = mock()
     private val brregProperties: BRREGProperties = mock()
-    private val termsService = TermsService(termsAdapter, altinnAuthActivity, brregProperties)
+    private val skattProperties: SkattProperties = mock()
+    private val termsService = TermsService(termsAdapter, altinnAuthActivity, brregProperties, skattProperties)
 
     @Nested
     internal inner class AltinnTerms {
@@ -129,6 +131,27 @@ class Terms {
             whenever(termsAdapter.orgAcceptedTermsVersion("974760673")).thenReturn("1.2.3")
 
             assertEquals("974760673:1.2.3", termsService.getOrgTermsBRREG())
+        }
+
+    }
+
+    @Nested
+    internal inner class SkattTerms {
+
+        @Test
+        fun orgHasNotAccepted() {
+            whenever(skattProperties.orgnr).thenReturn("974761076")
+            whenever(termsAdapter.orgAcceptedTermsVersion("974761076")).thenReturn("0.0.0")
+
+            assertEquals("", termsService.getOrgTermsSkatt())
+        }
+
+        @Test
+        fun orgHasAccepted() {
+            whenever(skattProperties.orgnr).thenReturn("974761076")
+            whenever(termsAdapter.orgAcceptedTermsVersion("974761076")).thenReturn("1.2.3")
+
+            assertEquals("974761076:1.2.3", termsService.getOrgTermsSkatt())
         }
 
     }
