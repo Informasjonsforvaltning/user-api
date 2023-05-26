@@ -24,6 +24,11 @@ application:
     orgnr: ${ORGNR_BRREG:974760673}
     adminGroupID: ${ADMIN_GROUP_BRREG:123}
     writeGroupID: ${WRITE_GROUP_BRREG:321}
+  skatt:
+    orgnr: ${ORGNR_SKATT:974761076}
+    adminGroupID: ${ADMIN_GROUP_SKATT:123}
+    writeGroupID: ${WRITE_GROUP_SKATT:321}
+    readGroupID: ${READ_GROUP_SKATT:111}
 server:
   port: 8080
 

@@ -42,4 +42,10 @@ class TermsController(
             ResponseEntity(termsService.getOrgTermsBRREG(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
+    @GetMapping(value = ["/skatt"])
+    fun getOrgTermsSkatt(httpServletRequest: HttpServletRequest): ResponseEntity<String> =
+        if(endpointPermissions.isFromFDKCluster(httpServletRequest)) {
+            ResponseEntity(termsService.getOrgTermsSkatt(), HttpStatus.OK)
+        } else ResponseEntity(HttpStatus.FORBIDDEN)
+
 }

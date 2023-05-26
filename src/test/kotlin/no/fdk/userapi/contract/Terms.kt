@@ -109,4 +109,28 @@ class Terms : WiremockContext()  {
         }
 
     }
+
+    @Nested
+    internal inner class Skatt {
+
+        @Test
+        fun forbiddenWithWrongApiKey() {
+            val response = apiGet(
+                path = "/terms/skatt",
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+
+            assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
+        }
+
+        @Test
+        fun respondWithCorrectTerms() {
+            val response = apiGet(
+                path = "/terms/skatt",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response["status"])
+            assertEquals("974761076:1.1.1", response["body"])
+        }
+
+    }
 }
