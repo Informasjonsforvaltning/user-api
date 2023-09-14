@@ -46,7 +46,8 @@ fun AltinnRightsResponse.toFDKRoles(): List<RoleFDK> =
 private fun serviceCodeToRole(serviceCode: String?): RoleFDK.Role? =
     when(serviceCode) {
         null -> null
-        "5755" -> RoleFDK.Role.Admin
+        "5977" -> RoleFDK.Role.Admin
+        "5755" -> RoleFDK.Role.Write
         "5756" -> RoleFDK.Role.Read
         else -> null
     }

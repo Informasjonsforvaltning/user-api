@@ -41,7 +41,7 @@ class Authorities : WiremockContext() {
         }
 
         @Test
-        fun respondWithBothSysAdminAndOrgAdminWhenInAdminList() {
+        fun respondWithBothSysAdminAndOrgRoleWhenInAdminList() {
             val response = apiGet(
                 path = "/authorities/altinn/10987654321",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
@@ -49,18 +49,18 @@ class Authorities : WiremockContext() {
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
             assertTrue { body.contains("system:root:admin") }
-            assertTrue { body.contains("organization:920210023:admin") }
+            assertTrue { body.contains("organization:920210023:write") }
         }
 
         @Test
-        fun respondWithAllOrgAdminWhenInAssociatedWithSeveralOrganizations() {
+        fun respondWithAllOrgRolesWhenInAssociatedWithSeveralOrganizations() {
             val response = apiGet(
                 path = "/authorities/altinn/11223344556",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
-            assertTrue { body.contains("organization:910258028:admin") }
+            assertTrue { body.contains("organization:910258028:write") }
             assertTrue { body.contains("organization:123456789:read") }
         }
 

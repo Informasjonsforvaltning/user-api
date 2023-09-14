@@ -35,7 +35,7 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
 
     fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? =
         try {
-            val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27")
+            val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27")
             jacksonObjectMapper().readValue(url)
         } catch (ex: Exception) {
             logger.error("Unable to get rights from Altinn", ex)

@@ -5,7 +5,7 @@ import no.fdk.userapi.model.AltinnOrganization
 import org.springframework.stereotype.Component
 import java.util.concurrent.Executors
 
-val SERVICE_CODES = listOf("5755", "5756")
+val SERVICE_CODES = listOf("5977", "5755", "5756")
 
 @Component
 class AltinnAuthActivity(
