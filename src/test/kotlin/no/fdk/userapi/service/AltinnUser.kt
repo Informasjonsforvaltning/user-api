@@ -66,7 +66,7 @@ class AltinnUser {
                 AltinnSubject(
                     name = person.name, socialSecurityNumber = ssn),
                     reportee = AltinnReportee(name = ORG.name, organizationNumber = ORG.organizationNumber),
-                    rights = listOf(AltinnRights(serviceCode = "5755")
+                    rights = listOf(AltinnRights(serviceCode = "5977")
                 )
             )
 
@@ -74,6 +74,24 @@ class AltinnUser {
             whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
             assertEquals(orgAdmin(ORG.organizationNumber as String), altinnAuthActivity.getAuthorities(ssn))
+        }
+
+        @Test
+        fun personIsOrgWrite() {
+            val ssn = "12345678901"
+            val person = AltinnPerson("First Last", ssn, listOf(ORG))
+            val rights = AltinnRightsResponse(
+                AltinnSubject(
+                    name = person.name, socialSecurityNumber = ssn),
+                reportee = AltinnReportee(name = ORG.name, organizationNumber = ORG.organizationNumber),
+                rights = listOf(AltinnRights(serviceCode = "5755")
+                )
+            )
+
+            whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
+            whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
+
+            assertEquals(orgWrite(ORG.organizationNumber as String), altinnAuthActivity.getAuthorities(ssn))
         }
 
         @Test
@@ -110,7 +128,7 @@ class AltinnUser {
             assertTrue { auth1.contains(orgRead(orgNotInOrgNrWhitelist.organizationNumber as String)) }
 
             val auth2 = altinnAuthActivity.getAuthorities(ssn2)
-            assertTrue { auth2.contains(orgAdmin(orgNotInOrgFormWhitelist.organizationNumber as String)) }
+            assertTrue { auth2.contains(orgWrite(orgNotInOrgFormWhitelist.organizationNumber as String)) }
         }
 
     }

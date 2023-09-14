@@ -64,7 +64,7 @@ class Altinn {
                     AltinnRights(id="4345873", type="Service", serviceCode="5755", serviceEditionCode="1")))
 
             val expected = listOf(
-                RoleFDK(resourceType = RoleFDK.ResourceType.Organization, resourceId = "999888777", role = RoleFDK.Role.Admin),
+                RoleFDK(resourceType = RoleFDK.ResourceType.Organization, resourceId = "999888777", role = RoleFDK.Role.Write),
                 RoleFDK(resourceType = RoleFDK.ResourceType.Organization, resourceId = "999888777", role = RoleFDK.Role.Read))
 
             assertEquals(expected, rights.toFDKRoles())
