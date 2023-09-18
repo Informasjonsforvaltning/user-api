@@ -13,7 +13,7 @@ class BRREGService(
         val role = when {
             groups.contains(brregProperties.adminGroupID) -> RoleFDK.Role.Admin
             groups.contains(brregProperties.writeGroupID) -> RoleFDK.Role.Write
-            else -> throw Exception("unauthorized brreg login")
+            else -> throw Exception("Unauthorized brreg login, user is member of ${groups.size} groups")
         }
         return RoleFDK(
             RoleFDK.ResourceType.Organization,
