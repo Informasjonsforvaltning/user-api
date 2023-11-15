@@ -137,12 +137,19 @@ class Authorities : WiremockContext() {
 
         @Test
         fun respondWithWriteRole() {
-            val response = apiGet(
+            val response0 = apiGet(
                 path = "/authorities/brreg?groups=321",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
-            assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("organization:974760673:write", response["body"])
+            assertEquals(HttpStatus.OK.value(), response0["status"])
+            assertEquals("organization:974760673:write", response0["body"])
+
+            val response1 = apiGet(
+                path = "/authorities/brreg?groups=222",
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+
+            assertEquals(HttpStatus.OK.value(), response1["status"])
+            assertEquals("organization:974760673:write", response1["body"])
         }
 
     }

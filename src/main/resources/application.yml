@@ -23,7 +23,7 @@ application:
   brreg:
     orgnr: ${ORGNR_BRREG:974760673}
     adminGroupID: ${ADMIN_GROUP_BRREG:123}
-    writeGroupID: ${WRITE_GROUP_BRREG:321}
+    writeGroupID: ${WRITE_GROUP_BRREG:321,222}
   skatt:
     orgnr: ${ORGNR_SKATT:974761076}
     adminGroupID: ${ADMIN_GROUP_SKATT:123}
