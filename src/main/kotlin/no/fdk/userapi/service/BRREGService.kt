@@ -12,7 +12,7 @@ class BRREGService(
     fun getAuthorities(groups: List<String>): String {
         val role = when {
             groups.contains(brregProperties.adminGroupID) -> RoleFDK.Role.Admin
-            groups.contains(brregProperties.writeGroupID) -> RoleFDK.Role.Write
+            groups.any (brregProperties.writeGroupID::contains) -> RoleFDK.Role.Write
             else -> throw Exception("Unauthorized brreg login, user is member of ${groups.size} groups")
         }
         return RoleFDK(

@@ -6,5 +6,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class BRREGProperties (
     val orgnr: String,
     val adminGroupID: String,
-    val writeGroupID: String
+    val writeGroupID: List<String>
 )
