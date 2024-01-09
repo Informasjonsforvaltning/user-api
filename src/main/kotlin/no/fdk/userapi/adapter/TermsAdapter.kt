@@ -15,12 +15,14 @@ class TermsAdapter(
     private val hostProperties: HostProperties,
     private val securityProperties: SecurityProperties
 ) {
+    private val fiveSeconds = 5000
 
     fun orgAcceptedTermsVersion(organization: String): String {
         val url = URL("${hostProperties.termsHost}/terms/org/$organization/version")
         try {
             with(url.openConnection() as HttpURLConnection) {
                 setRequestProperty("X-API-KEY", securityProperties.userApiKey)
+                connectTimeout = fiveSeconds
                 connect()
                 if (HttpStatus.resolve(responseCode)?.is2xxSuccessful == true) {
                     inputStream.bufferedReader().use {
