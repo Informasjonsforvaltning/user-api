@@ -17,11 +17,11 @@ private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 
 @Service
 class AltinnAdapter(private val hostProperties: HostProperties) {
-    private val tenSeconds = 10000
+    private val sixtySeconds = 60000
 
     private fun altinnStream(url: URL): InputStream =
         with(url.openConnection() as HttpURLConnection) {
-            connectTimeout = tenSeconds
+            connectTimeout = sixtySeconds
             connect()
             if (HttpStatus.resolve(responseCode)?.is2xxSuccessful == true) {
                 inputStream
