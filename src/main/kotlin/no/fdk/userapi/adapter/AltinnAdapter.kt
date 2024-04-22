@@ -11,17 +11,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 
 private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 
 @Service
 class AltinnAdapter(private val hostProperties: HostProperties) {
-    private val sixtySeconds = 60000
+    private val twentySeconds = 20000
 
-    private fun altinnStream(url: URL): InputStream =
-        with(url.openConnection() as HttpURLConnection) {
-            connectTimeout = sixtySeconds
+    private fun altinnStream(uri: URI): InputStream =
+        with(uri.toURL().openConnection() as HttpURLConnection) {
+            connectTimeout = twentySeconds
+            readTimeout = twentySeconds
             connect()
             if (HttpStatus.resolve(responseCode)?.is2xxSuccessful == true) {
                 inputStream
@@ -31,9 +32,9 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
         }
 
     private fun getReportees(socialSecurityNumber: String, serviceCode: String): List<AltinnSubject?> {
-        val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
+        val uri = URI("${hostProperties.altinnProxyHost}/api/serviceowner/reportees?ForceEIAuthentication&subject=$socialSecurityNumber&servicecode=$serviceCode&serviceedition=1&\$top=1000")
         return try {
-            jacksonObjectMapper().readValue(altinnStream(url))
+            jacksonObjectMapper().readValue(altinnStream(uri))
         } catch (ex: Exception) {
             logger.error("Unable to get reportees from Altinn", ex)
             emptyList()
@@ -50,8 +51,8 @@ class AltinnAdapter(private val hostProperties: HostProperties) {
 
     fun getRights(socialSecurityNumber: String, orgNumber: String): AltinnRightsResponse? =
         try {
-            val url = URL("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27")
-            jacksonObjectMapper().readValue(altinnStream(url))
+            val uri = URI("${hostProperties.altinnProxyHost}/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=${socialSecurityNumber}&reportee=${orgNumber}&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27")
+            jacksonObjectMapper().readValue(altinnStream(uri))
         } catch (ex: Exception) {
             logger.error("Unable to get rights from Altinn", ex)
             null
