@@ -50,8 +50,8 @@ spring:
   config.activate.on-profile: contract-test
 application:
   hosts:
-    altinnProxyHost: http://localhost:5000/altinn
-    termsHost: http://localhost:5000/terms
+    altinnProxyHost: http://localhost:5555/altinn
+    termsHost: http://localhost:5555/terms
   whitelists:
     adminList: ${ADMIN_LIST:10987654321}
     orgNrWhitelist: ${ORGNR_WHITELIST:920210023,910258028,123456789}

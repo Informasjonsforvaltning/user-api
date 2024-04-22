@@ -3,7 +3,7 @@ package no.fdk.userapi.utils
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnReporteeType
 
-const val LOCAL_SERVER_PORT = 5000
+const val LOCAL_SERVER_PORT = 5555
 const val API_TEST_PORT = 5050
 
 const val EDITOR_ROLE: String = "editor"
