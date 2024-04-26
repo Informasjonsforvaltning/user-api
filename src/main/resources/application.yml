@@ -31,6 +31,10 @@ application:
     readGroupID: ${READ_GROUP_SKATT:111}
 server:
   port: 8080
+  servlet.session.timeout: 1m
+  tomcat:
+    connection-timeout: 5s
+    keep-alive-timeout: 1m
 
 ---
 #Utv-miljø lokalt på egen PC
