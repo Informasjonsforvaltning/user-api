@@ -1,7 +1,8 @@
 package no.fdk.userapi.contract
 
-import no.fdk.userapi.utils.*
-import org.junit.jupiter.api.Disabled
+import no.fdk.userapi.utils.SSO_KEY
+import no.fdk.userapi.utils.WiremockContext
+import no.fdk.userapi.utils.apiGet
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
