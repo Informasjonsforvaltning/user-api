@@ -1,12 +1,6 @@
 package no.fdk.userapi.mapper
 
-import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.AltinnReportee
-import no.fdk.userapi.model.AltinnRights
-import no.fdk.userapi.model.AltinnRightsResponse
-import no.fdk.userapi.model.AltinnSubject
-import no.fdk.userapi.model.RoleFDK
-import no.fdk.userapi.model.UserFDK
+import no.fdk.userapi.model.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

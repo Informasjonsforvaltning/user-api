@@ -1,5 +1,6 @@
 package no.fdk.userapi.service
 
+import kotlinx.coroutines.test.runTest
 import no.fdk.userapi.adapter.TermsAdapter
 import no.fdk.userapi.configuration.BRREGProperties
 import no.fdk.userapi.configuration.SkattProperties
@@ -17,44 +18,44 @@ import kotlin.test.assertEquals
 @Tag("unit")
 class Terms {
     private val termsAdapter: TermsAdapter = mock()
-    private val altinnAuthActivity: AltinnAuthActivity = mock()
+    private val altinnUserService: AltinnUserService = mock()
     private val brregProperties: BRREGProperties = mock()
     private val skattProperties: SkattProperties = mock()
-    private val termsService = TermsService(termsAdapter, altinnAuthActivity, brregProperties, skattProperties)
+    private val termsService = TermsService(termsAdapter, altinnUserService, brregProperties, skattProperties)
 
     @Nested
     internal inner class AltinnTerms {
 
         @Test
-        fun orgHasNotAccepted() {
+        fun orgHasNotAccepted() = runTest {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
+            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("0.0.0")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
             assertEquals("", response)
         }
 
         @Test
-        fun orgHasAccepted() {
+        fun orgHasAccepted() = runTest {
             val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
+            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
                 .thenReturn("1.2.3")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
             assertEquals("${ORG.organizationNumber}:1.2.3", response)
         }
 
         @Test
-        fun severalOrgs() {
+        fun severalOrgs() = runTest {
             val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Enterprise)
             val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Enterprise)
 
@@ -63,14 +64,14 @@ class Terms {
                 name = "First Last",
                 organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
 
-            whenever(altinnAuthActivity.getOrganizationsForTerms(person.socialSecurityNumber!!))
+            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
                 .thenReturn(person.organizations)
 
             whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!)).thenReturn("1.2.3")
             whenever(termsAdapter.orgAcceptedTermsVersion(orgNotAccepted.organizationNumber!!)).thenReturn("0.0.0")
             whenever(termsAdapter.orgAcceptedTermsVersion(orgAcceptedOld.organizationNumber!!)).thenReturn("1.0.0")
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber as String)
+            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
             val expected = "${ORG.organizationNumber}:1.2.3,${orgAcceptedOld.organizationNumber}:1.0.0"
 

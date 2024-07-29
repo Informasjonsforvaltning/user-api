@@ -1,5 +1,6 @@
 package no.fdk.userapi.service
 
+import kotlinx.coroutines.test.runTest
 import no.fdk.userapi.adapter.AltinnAdapter
 import no.fdk.userapi.configuration.WhitelistProperties
 import no.fdk.userapi.model.*
@@ -19,7 +20,6 @@ class AltinnUser {
     private val whitelists: WhitelistProperties = mock()
     private val altinnAdapter: AltinnAdapter = mock()
     private val altinnUserService = AltinnUserService(whitelists, altinnAdapter)
-    private val altinnAuthActivity = AltinnAuthActivity(altinnUserService)
 
     @BeforeEach
     fun init() {
@@ -32,34 +32,34 @@ class AltinnUser {
     internal inner class PersonAuthorities {
 
         @Test
-        fun personNotFoundReturnsEmptyString() {
+        fun personNotFoundReturnsEmptyString() = runTest {
             val ssn = "12345678901"
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
-            assertEquals("", altinnAuthActivity.getAuthorities(ssn))
+            assertEquals("", altinnUserService.getAuthorities(ssn))
         }
 
         @Test
-        fun noSSnReturnsNull() {
+        fun noSSnReturnsNull() = runTest {
             val ssn = "12345678901"
             val personNoSSN = AltinnPerson("First Last", null, listOf(ORG))
 
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(personNoSSN)
 
-            assertEquals("", altinnAuthActivity.getAuthorities(ssn))
+            assertEquals("", altinnUserService.getAuthorities(ssn))
         }
 
         @Test
-        fun personIsSysAdmin() {
+        fun personIsSysAdmin() = runTest{
             val ssn = "23076102252"
             val person = AltinnPerson("First Last", ssn, emptyList())
 
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
 
-            assertEquals(SYS_ADMIN, altinnAuthActivity.getAuthorities(ssn))
+            assertEquals(SYS_ADMIN, altinnUserService.getAuthorities(ssn))
         }
 
         @Test
-        fun personIsOrgAdmin() {
+        fun personIsOrgAdmin() = runTest {
             val ssn = "12345678901"
             val person = AltinnPerson("First Last", ssn, listOf(ORG))
             val rights = AltinnRightsResponse(
@@ -73,11 +73,11 @@ class AltinnUser {
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
             whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
-            assertEquals(orgAdmin(ORG.organizationNumber as String), altinnAuthActivity.getAuthorities(ssn))
+            assertEquals(orgAdmin(ORG.organizationNumber), altinnUserService.getAuthorities(ssn))
         }
 
         @Test
-        fun personIsOrgWrite() {
+        fun personIsOrgWrite() = runTest {
             val ssn = "12345678901"
             val person = AltinnPerson("First Last", ssn, listOf(ORG))
             val rights = AltinnRightsResponse(
@@ -91,11 +91,11 @@ class AltinnUser {
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
             whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
-            assertEquals(orgWrite(ORG.organizationNumber as String), altinnAuthActivity.getAuthorities(ssn))
+            assertEquals(orgWrite(ORG.organizationNumber as String), altinnUserService.getAuthorities(ssn))
         }
 
         @Test
-        fun personHasSeveralRoles() {
+        fun personHasSeveralRoles() = runTest {
             val ssn1 = "23076102252"
             val ssn2 = "12345678901"
             val orgNotInOrgNrWhitelist = AltinnOrganization(
@@ -123,11 +123,11 @@ class AltinnUser {
                 )
             )
 
-            val auth1 = altinnAuthActivity.getAuthorities(ssn1)
+            val auth1 = altinnUserService.getAuthorities(ssn1)
             assertTrue { auth1.contains(SYS_ADMIN) }
             assertTrue { auth1.contains(orgRead(orgNotInOrgNrWhitelist.organizationNumber as String)) }
 
-            val auth2 = altinnAuthActivity.getAuthorities(ssn2)
+            val auth2 = altinnUserService.getAuthorities(ssn2)
             assertTrue { auth2.contains(orgWrite(orgNotInOrgFormWhitelist.organizationNumber as String)) }
         }
 
@@ -136,21 +136,21 @@ class AltinnUser {
     internal inner class PersonOrganizations {
 
         @Test
-        fun personNotFoundReturnsEmptyList() {
+        fun personNotFoundReturnsEmptyList() = runTest {
             val ssn = "12345678901"
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
             assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
         }
 
         @Test
-        fun handlesEmptyOrgList() {
+        fun handlesEmptyOrgList() = runTest {
             val ssn = "12345678901"
             whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
             assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
         }
 
         @Test
-        fun whitelistedSubOrgIsIncluded() {
+        fun whitelistedSubOrgIsIncluded() = runTest {
             val ssn = "12345678901"
             val org = AltinnOrganization(
                 name = "Org", organizationNumber = "123456789", organizationForm = "STAT", type = AltinnReporteeType.Enterprise
@@ -166,7 +166,7 @@ class AltinnUser {
         }
 
         @Test
-        fun subOrgOfNonWhitelistedIsStillIncluded() {
+        fun subOrgOfNonWhitelistedIsStillIncluded() = runTest {
             val ssn = "12345678901"
             val org = AltinnOrganization(
                 name = "Org", organizationNumber = "987654321", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise

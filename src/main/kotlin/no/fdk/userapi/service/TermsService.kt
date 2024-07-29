@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service
 @Service
 class TermsService(
     private val termsAdapter: TermsAdapter,
-    private val altinnAuthActivity: AltinnAuthActivity,
+    private val altinnUserService: AltinnUserService,
     private val brregProperties: BRREGProperties,
     private val skattProperties: SkattProperties
 ) {
 
-    fun getOrgTermsAltinn(id: String): String =
-        altinnAuthActivity.getOrganizationsForTerms(id)
+    suspend fun getOrgTermsAltinn(id: String): String =
+        altinnUserService.getOrganizationsForTerms(id)
             .asSequence()
             .mapNotNull { it.organizationNumber }
             .distinct()
