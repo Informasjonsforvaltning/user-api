@@ -2,7 +2,7 @@ This API provides SSO with additional information and function. It proxies user 
 
 ## Requirements
 - maven
-- java 15
+- java 21
 - docker
 - docker-compose
 
