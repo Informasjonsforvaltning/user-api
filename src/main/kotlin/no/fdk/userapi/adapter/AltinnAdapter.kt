@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.withContext
 import no.fdk.userapi.configuration.HostProperties
+import no.fdk.userapi.configuration.SecurityProperties
 import no.fdk.userapi.mapper.toOrganization
 import no.fdk.userapi.mapper.toPerson
 import no.fdk.userapi.model.*
@@ -26,7 +27,11 @@ private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 private val objectMapper = jacksonObjectMapper()
 
 @Service
-class AltinnAdapter(private val hostProperties: HostProperties, private val cacheManager: CacheManager) {
+class AltinnAdapter(
+    private val hostProperties: HostProperties,
+    private val securityProperties: SecurityProperties,
+    private val cacheManager: CacheManager
+) {
     private val webClient = WebClient.builder()
         .clientConnector(ReactorClientHttpConnector(
             HttpClient.create(
@@ -35,6 +40,7 @@ class AltinnAdapter(private val hostProperties: HostProperties, private val cach
                     .pendingAcquireTimeout(Duration.ofSeconds(60))
                     .build())
             .responseTimeout(Duration.ofSeconds(30))
+            .headers { headers -> headers.add("X-API-KEY", securityProperties.altinnProxyKey) }
             .doOnConnected { conn ->
                 conn.addHandlerLast(ReadTimeoutHandler(30))
                     .addHandlerLast(WriteTimeoutHandler(30))
