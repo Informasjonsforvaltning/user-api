@@ -20,6 +20,7 @@ application:
   secrets:
     ssoApiKey: ${SSO_API_KEY}
     userApiKey: ${USER_API_KEY}
+    altinnProxyKey: ${ALTINN_PROXY_API_KEY}
   brreg:
     orgnr: ${ORGNR_BRREG:974760673}
     adminGroupID: ${ADMIN_GROUP_BRREG:123}
@@ -59,6 +60,7 @@ application:
   secrets:
     ssoApiKey: ssosecret
     userApiKey: userapisecret
+    altinnProxyKey: proxysecret
 server.port: 8125
 
 ---
@@ -74,4 +76,5 @@ application:
   secrets:
     ssoApiKey: ssosecret
     userApiKey: userapisecret
+    altinnProxyKey: proxysecret
 server.port: 5050

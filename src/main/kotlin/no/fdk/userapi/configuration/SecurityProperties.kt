@@ -5,5 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("application.secrets")
 data class SecurityProperties (
     val ssoApiKey: String,
-    val userApiKey: String
+    val userApiKey: String,
+    val altinnProxyKey: String
 )
