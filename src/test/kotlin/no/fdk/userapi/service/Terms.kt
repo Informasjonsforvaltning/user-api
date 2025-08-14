@@ -27,55 +27,60 @@ class Terms {
     internal inner class AltinnTerms {
 
         @Test
-        fun orgHasNotAccepted() = runTest {
-            val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
+        fun orgHasNotAccepted() {
+            runTest {
+                val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
-                .thenReturn(person.organizations)
-            whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
-                .thenReturn("0.0.0")
+                whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
+                    .thenReturn(person.organizations)
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(ORG.organizationNumber!!)))
+                    .thenReturn(emptyList())
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
+                val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
-            assertEquals("", response)
+                assertEquals("", response)
+            }
         }
 
         @Test
-        fun orgHasAccepted() = runTest {
-            val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
+        fun orgHasAccepted() {
+            runTest {
+                val person = AltinnPerson(socialSecurityNumber = "23076102252", name = "First Last", organizations = listOf(ORG))
 
-            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
-                .thenReturn(person.organizations)
-            whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!))
-                .thenReturn("1.2.3")
+                whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
+                    .thenReturn(person.organizations)
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(ORG.organizationNumber!!)))
+                    .thenReturn(listOf("${ORG.organizationNumber}:1.2.3"))
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
+                val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
-            assertEquals("${ORG.organizationNumber}:1.2.3", response)
+                assertEquals("${ORG.organizationNumber}:1.2.3", response)
+            }
         }
 
         @Test
-        fun severalOrgs() = runTest {
-            val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Enterprise)
-            val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Enterprise)
+        fun severalOrgs() {
+            runTest {
+                val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Enterprise)
+                val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Enterprise)
 
-            val person = AltinnPerson(
-                socialSecurityNumber = "23076102252",
-                name = "First Last",
-                organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
+                val person = AltinnPerson(
+                    socialSecurityNumber = "23076102252",
+                    name = "First Last",
+                    organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
 
-            whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
-                .thenReturn(person.organizations)
+                whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
+                    .thenReturn(person.organizations)
 
-            whenever(termsAdapter.orgAcceptedTermsVersion(ORG.organizationNumber!!)).thenReturn("1.2.3")
-            whenever(termsAdapter.orgAcceptedTermsVersion(orgNotAccepted.organizationNumber!!)).thenReturn("0.0.0")
-            whenever(termsAdapter.orgAcceptedTermsVersion(orgAcceptedOld.organizationNumber!!)).thenReturn("1.0.0")
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(ORG.organizationNumber!!, orgNotAccepted.organizationNumber!!, orgAcceptedOld.organizationNumber!!)))
+                    .thenReturn(listOf("${ORG.organizationNumber}:1.2.3", "${orgAcceptedOld.organizationNumber}:1.0.0"))
 
-            val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
+                val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
 
-            val expected = "${ORG.organizationNumber}:1.2.3,${orgAcceptedOld.organizationNumber}:1.0.0"
+                val expected = "${ORG.organizationNumber}:1.2.3,${orgAcceptedOld.organizationNumber}:1.0.0"
 
-            assertEquals(expected, response)
+                assertEquals(expected, response)
+            }
         }
 
     }
@@ -85,32 +90,37 @@ class Terms {
 
         @Test
         fun orgHasNotAccepted() {
-            val orgNr = "123456789"
-            whenever(termsAdapter.orgAcceptedTermsVersion(orgNr)).thenReturn("0.0.0")
+            runTest {
+                val orgNr = "123456789"
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(orgNr))).thenReturn(emptyList())
 
-            assertEquals("", termsService.getOrgTermsDifi(listOf(orgNr)))
+                assertEquals("", termsService.getOrgTermsDifi(listOf(orgNr)))
+            }
         }
 
         @Test
         fun orgHasAccepted() {
-            val orgNr = "123456789"
-            whenever(termsAdapter.orgAcceptedTermsVersion(orgNr)).thenReturn("1.2.3")
+            runTest {
+                val orgNr = "123456789"
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(orgNr))).thenReturn(listOf("$orgNr:1.2.3"))
 
-            assertEquals("$orgNr:1.2.3", termsService.getOrgTermsDifi(listOf(orgNr)))
+                assertEquals("$orgNr:1.2.3", termsService.getOrgTermsDifi(listOf(orgNr)))
+            }
         }
 
         @Test
         fun severalOrgs() {
-            val org0 = "123456789"
-            val org1 = "987654321"
-            val org2 = "112233445"
-            whenever(termsAdapter.orgAcceptedTermsVersion(org0)).thenReturn("1.2.3")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org1)).thenReturn("0.0.0")
-            whenever(termsAdapter.orgAcceptedTermsVersion(org2)).thenReturn("1.0.0")
+            runTest {
+                val org0 = "123456789"
+                val org1 = "987654321"
+                val org2 = "112233445"
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(org0, org1, org2)))
+                    .thenReturn(listOf("$org0:1.2.3", "$org2:1.0.0"))
 
-            val response = termsService.getOrgTermsDifi(listOf(org0, org1, org2))
+                val response = termsService.getOrgTermsDifi(listOf(org0, org1, org2))
 
-            assertEquals("$org0:1.2.3,$org2:1.0.0", response)
+                assertEquals("$org0:1.2.3,$org2:1.0.0", response)
+            }
         }
 
     }
@@ -120,18 +130,24 @@ class Terms {
 
         @Test
         fun orgHasNotAccepted() {
-            whenever(brregProperties.orgnr).thenReturn("974760673")
-            whenever(termsAdapter.orgAcceptedTermsVersion("974760673")).thenReturn("0.0.0")
+            runTest {
+                whenever(brregProperties.orgnr).thenReturn("974760673")
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("974760673")))
+                    .thenReturn(emptyList())
 
-            assertEquals("", termsService.getOrgTermsBRREG())
+                assertEquals("", termsService.getOrgTermsBRREG())
+            }
         }
 
         @Test
         fun orgHasAccepted() {
-            whenever(brregProperties.orgnr).thenReturn("974760673")
-            whenever(termsAdapter.orgAcceptedTermsVersion("974760673")).thenReturn("1.2.3")
+            runTest {
+                whenever(brregProperties.orgnr).thenReturn("974760673")
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("974760673")))
+                    .thenReturn(listOf("974760673:1.2.3"))
 
-            assertEquals("974760673:1.2.3", termsService.getOrgTermsBRREG())
+                assertEquals("974760673:1.2.3", termsService.getOrgTermsBRREG())
+            }
         }
 
     }
@@ -141,18 +157,24 @@ class Terms {
 
         @Test
         fun orgHasNotAccepted() {
-            whenever(skattProperties.orgnr).thenReturn("974761076")
-            whenever(termsAdapter.orgAcceptedTermsVersion("974761076")).thenReturn("0.0.0")
+            runTest {
+                whenever(skattProperties.orgnr).thenReturn("974761076")
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("974761076")))
+                    .thenReturn(emptyList())
 
-            assertEquals("", termsService.getOrgTermsSkatt())
+                assertEquals("", termsService.getOrgTermsSkatt())
+            }
         }
 
         @Test
         fun orgHasAccepted() {
-            whenever(skattProperties.orgnr).thenReturn("974761076")
-            whenever(termsAdapter.orgAcceptedTermsVersion("974761076")).thenReturn("1.2.3")
+            runTest {
+                whenever(skattProperties.orgnr).thenReturn("974761076")
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("974761076")))
+                    .thenReturn(listOf("974761076:1.2.3"))
 
-            assertEquals("974761076:1.2.3", termsService.getOrgTermsSkatt())
+                assertEquals("974761076:1.2.3", termsService.getOrgTermsSkatt())
+            }
         }
 
     }

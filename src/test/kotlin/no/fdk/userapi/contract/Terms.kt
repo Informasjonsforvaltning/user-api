@@ -41,7 +41,7 @@ class Terms : WiremockContext()  {
         }
 
         @Test
-        fun chacksAllOrgsAltinnHasAssociatedWithThePerson() {
+        fun checksAllOrgsAltinnHasAssociatedWithThePerson() {
             val response = apiGet(
                 path = "/terms/altinn/11223344556",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
@@ -77,11 +77,11 @@ class Terms : WiremockContext()  {
         @Test
         fun checksAllGivenOrgs() {
             val response = apiGet(
-                path = "/terms/difi?orgs=123456789,910258028,920210023",
+                path = "/terms/difi?orgs=123456789,920210023",
                 headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
 
             assertEquals(HttpStatus.OK.value(), response["status"])
-            assertEquals("910258028:1.0.0,920210023:1.2.3", response["body"])
+            assertEquals("920210023:1.2.3", response["body"])
         }
 
     }

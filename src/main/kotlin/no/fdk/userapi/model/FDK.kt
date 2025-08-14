@@ -1,9 +1,17 @@
 package no.fdk.userapi.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 data class UserFDK (
     val id: String,
     val firstName: String?,
     val lastName: String?
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class OrgAcceptation (
+    val orgId: String,
+    val acceptedVersion: String
 )
 
 class RoleFDK (
