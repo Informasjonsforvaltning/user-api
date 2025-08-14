@@ -24,7 +24,7 @@ class TermsController(
         }
 
     @GetMapping(value = ["/difi"])
-    fun getOrgTermsDifi(
+    suspend fun getOrgTermsDifi(
         exchange: ServerWebExchange,
         @RequestParam(value = "orgs", required = true) orgs: List<String>
     ): ResponseEntity<String> =
@@ -33,13 +33,13 @@ class TermsController(
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
     @GetMapping(value = ["/brreg"])
-    fun getOrgTermsBRREG(exchange: ServerWebExchange): ResponseEntity<String> =
+    suspend fun getOrgTermsBRREG(exchange: ServerWebExchange): ResponseEntity<String> =
         if(endpointPermissions.isFromFDKCluster(exchange.request)) {
             ResponseEntity(termsService.getOrgTermsBRREG(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)
 
     @GetMapping(value = ["/skatt"])
-    fun getOrgTermsSkatt(exchange: ServerWebExchange): ResponseEntity<String> =
+    suspend fun getOrgTermsSkatt(exchange: ServerWebExchange): ResponseEntity<String> =
         if(endpointPermissions.isFromFDKCluster(exchange.request)) {
             ResponseEntity(termsService.getOrgTermsSkatt(), HttpStatus.OK)
         } else ResponseEntity(HttpStatus.FORBIDDEN)

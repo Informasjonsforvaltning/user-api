@@ -13,30 +13,27 @@ class TermsService(
     private val skattProperties: SkattProperties
 ) {
 
-    suspend fun getOrgTermsAltinn(id: String): String =
-        altinnUserService.getOrganizationsForTerms(id)
+    suspend fun getOrgTermsAltinn(id: String): String {
+        val orgs = altinnUserService.getOrganizationsForTerms(id)
             .asSequence()
             .mapNotNull { it.organizationNumber }
             .distinct()
-            .map { Pair(it, termsAdapter.orgAcceptedTermsVersion(it)) }
-            .mapNotNull { it.toTermsString() }
+            .toList()
+
+        return termsAdapter.acceptedTermsForOrganizations(orgs)
+            .joinToString(",")
+    }
+
+    suspend fun getOrgTermsDifi(orgs: List<String>): String =
+        termsAdapter.acceptedTermsForOrganizations(orgs.distinct())
             .joinToString(",")
 
-    fun getOrgTermsDifi(orgs: List<String>): String =
-        orgs.distinct()
-            .map { Pair(it, termsAdapter.orgAcceptedTermsVersion(it)) }
-            .mapNotNull { it.toTermsString() }
+    suspend fun getOrgTermsBRREG(): String =
+        termsAdapter.acceptedTermsForOrganizations(listOf(brregProperties.orgnr))
             .joinToString(",")
 
-    fun getOrgTermsBRREG(): String =
-        Pair(brregProperties.orgnr, termsAdapter.orgAcceptedTermsVersion(brregProperties.orgnr))
-            .toTermsString() ?: ""
-
-    fun getOrgTermsSkatt(): String =
-        Pair(skattProperties.orgnr, termsAdapter.orgAcceptedTermsVersion(skattProperties.orgnr))
-            .toTermsString() ?: ""
-
-    private fun Pair<String, String?>.toTermsString(): String? =
-        if (second != "0.0.0") "${first}:${second}" else null
+    suspend fun getOrgTermsSkatt(): String =
+        termsAdapter.acceptedTermsForOrganizations(listOf(skattProperties.orgnr))
+            .joinToString(",")
 
 }

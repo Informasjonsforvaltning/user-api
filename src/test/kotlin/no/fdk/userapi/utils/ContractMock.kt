@@ -54,39 +54,45 @@ fun startMockServer() {
                 .willReturn(okJson(ALTINN_RIGHTS_2)))
 
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/920210023/version"))
-                .willReturn(ok("1.2.3")))
+            get(urlEqualTo("/terms/terms/org?organizations=920210023"))
+                .willReturn(okJson("""[{"orgId": "920210023", "acceptedVersion":  "1.2.3"}]""")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/910258028/version"))
-                .willReturn(ok("1.0.0")))
+            get(urlEqualTo("/terms/terms/org?organizations=910258028"))
+                .willReturn(okJson("""[{"orgId": "910258028", "acceptedVersion":  "1.0.0"}]""")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/123456789/version"))
-                .willReturn(aResponse().withStatus(404)))
+            get(urlEqualTo("/terms/terms/org?organizations=123456789,910258028"))
+                .willReturn(okJson("""[{"orgId": "910258028", "acceptedVersion":  "1.0.0"}]""")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org?organizations=910258028,123456789"))
+                .willReturn(okJson("""[{"orgId": "910258028", "acceptedVersion":  "1.0.0"}]""")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org?organizations=123456789,920210023"))
+                .willReturn(okJson("""[{"orgId": "920210023", "acceptedVersion":  "1.2.3"}]""")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org?organizations=920210023,123456789"))
+                .willReturn(okJson("""[{"orgId": "920210023", "acceptedVersion":  "1.2.3"}]""")))
+        mockserver.stubFor(
+            get(urlEqualTo("/terms/terms/org?organizations=123456789"))
+                .willReturn(okJson("[]")))
 
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/971183675/version"))
-                .willReturn(aResponse().withStatus(404)))
+            get(urlEqualTo("/terms/terms/org?organizations=971183675"))
+                .willReturn(okJson("[]")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/987592567/version"))
-                .willReturn(ok("1.0.1")))
+            get(urlEqualTo("/terms/terms/org?organizations=987592567"))
+                .willReturn(okJson("""[{"orgId": "987592567", "acceptedVersion":  "1.0.1"}]""")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/923954791/version"))
-                .willReturn(ok("12.16.11")))
+            get(urlEqualTo("/terms/terms/org?organizations=923954791"))
+                .willReturn(okJson("""[{"orgId": "923954791", "acceptedVersion":  "12.16.11"}]""")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/974760673/version"))
-                .willReturn(ok("1.0.1")))
+            get(urlEqualTo("/terms/terms/org?organizations=974760673"))
+                .willReturn(okJson("""[{"orgId": "974760673", "acceptedVersion":  "1.0.1"}]""")))
         mockserver.stubFor(
-            get(urlEqualTo("/terms/terms/org/974761076/version"))
-                .willReturn(ok("1.1.1")))
+            get(urlEqualTo("/terms/terms/org?organizations=974761076"))
+                .willReturn(okJson("""[{"orgId": "974761076", "acceptedVersion":  "1.1.1"}]""")))
 
         mockserver.start()
     }
-}
-
-fun stopMockServer() {
-
-    if (mockserver.isRunning) mockserver.stop()
-
 }
 
 abstract class WiremockContext {
