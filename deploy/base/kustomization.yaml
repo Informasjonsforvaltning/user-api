@@ -8,3 +8,6 @@ images:
   - name: user-api
     newName: ghcr.io/informasjonsforvaltning/user-api
     newTag: $(GIT_COMMIT_SHA)
+
+patches:
+  - path: env.yaml
