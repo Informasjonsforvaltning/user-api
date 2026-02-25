@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("application.hosts")
 data class HostProperties (
-    val altinnProxyHost: String,
-    val termsHost: String
+    val termsHost: String,
+    val maskinportenApiHost: String? = null,
+    val altinnAccessManagementHost: String? = null
 )
