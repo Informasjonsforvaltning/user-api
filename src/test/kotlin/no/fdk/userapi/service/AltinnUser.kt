@@ -132,7 +132,7 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
-                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
+                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
             }
         }
 
@@ -141,7 +141,7 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
-                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn, "5755"))
+                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
             }
         }
 
@@ -159,7 +159,7 @@ class AltinnUser {
                     name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Business
                 )
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
-                assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn, "5755"))
+                assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn))
             }
         }
 
@@ -174,7 +174,7 @@ class AltinnUser {
                     name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
                 )
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
-                assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn, "5755"))
+                assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn))
             }
         }
 

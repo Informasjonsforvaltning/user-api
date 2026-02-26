@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 private val logger = LoggerFactory.getLogger(AltinnUserService::class.java)
-val SERVICE_CODES = listOf("5977", "5755", "5756")
 
 @Service
 class AltinnUserService (
@@ -19,15 +18,15 @@ class AltinnUserService (
     private val altinnAdapter: AltinnAdapter
 ) {
 
-    suspend fun getUser(id: String, serviceCode: String): AltinnPerson? =
-        altinnAdapter.getPerson(id, serviceCode)
+    suspend fun getUser(id: String): AltinnPerson? =
+        altinnAdapter.getPerson(id, "")
 
     fun getSysAdminAuthorities(id: String): List<String> =
         if (whitelists.adminList.contains(id)) listOf(ROOT_ADMIN.toString())
         else emptyList()
 
-    suspend fun organizationsForService(ssn: String, serviceCode: String): List<AltinnOrganization> {
-        val person = altinnAdapter.getPerson(ssn, serviceCode)
+    suspend fun organizationsForService(ssn: String): List<AltinnOrganization> {
+        val person = altinnAdapter.getPerson(ssn, "")
         return if(person?.socialSecurityNumber != null) {
             person.organizations
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
@@ -65,11 +64,8 @@ class AltinnUserService (
     }
 
     private suspend fun allOrganizations(ssn: String): List<AltinnOrganization> {
-        val orgTasks = SERVICE_CODES.map {
-            organizationsForService(ssn, it)
-        }
         logger.debug("Getting all organizations, running coroutines")
-        return orgTasks.flatten()
+        return organizationsForService(ssn)
     }
 
     private suspend fun organizationAuthorities(ssn: String): List<String> {
@@ -81,8 +77,7 @@ class AltinnUserService (
     }
 
     suspend fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
-        val getUserTasks = SERVICE_CODES.map { getUser(ssn, it) }
         logger.debug("Getting organizations for terms, running coroutines")
-        return getUserTasks.flatMap { it?.organizations ?: emptyList() }
+        return getUser(ssn)?.organizations ?: emptyList()
     }
 }
