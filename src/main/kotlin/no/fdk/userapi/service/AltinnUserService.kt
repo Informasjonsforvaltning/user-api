@@ -2,7 +2,6 @@ package no.fdk.userapi.service
 
 import no.fdk.userapi.adapter.AltinnAdapter
 import no.fdk.userapi.configuration.WhitelistProperties
-import no.fdk.userapi.mapper.toFDKRoles
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
 import no.fdk.userapi.model.AltinnReporteeType
@@ -41,9 +40,7 @@ class AltinnUserService (
     }
 
     suspend fun authForOrganization(ssn: String, org: AltinnOrganization): List<String> =
-        altinnAdapter.getRights(ssn, org.organizationNumber!!)
-            .let { response -> response?.toFDKRoles() ?: emptyList() }
-            .map { obj: RoleFDK -> obj.toString() }
+        (altinnAdapter.getRights(ssn, org.organizationNumber!!) ?: emptyList()).map { it.toString() }
 
     private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false

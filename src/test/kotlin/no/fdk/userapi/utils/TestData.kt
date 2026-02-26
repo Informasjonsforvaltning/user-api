@@ -33,124 +33,67 @@ val ORG_FORM_LIST = listOf("ADOS", "FKF", "FYLK", "IKS", "KF", "KIRK", "KOMM", "
 
 const val SSO_KEY = "ssosecret"
 
-val ALTINN_PERSON_0 = """
+val AUTHORIZED_PARTIES_0 = """
     [
       {
-        "Name": "KARMSUND OG KYSNESSTRAND REVISJON",
-        "Type": "Enterprise",
-        "OrganizationNumber": "920210023",
-        "OrganizationForm": "ORGL",
-        "Status": "Active"
+        "partyUuid": "a1b2c3d4-0001-4000-8000-000000000001",
+        "name": "KARMSUND OG KYSNESSTRAND REVISJON",
+        "organizationNumber": "920210023",
+        "personId": null,
+        "type": "Organization",
+        "partyId": 50001001,
+        "unitType": "ORGL",
+        "isDeleted": false,
+        "authorizedResources": ["datanorge-skrivetilgang"]
       },
       {
-        "Name": "FIRST NAME LAST",
-        "Type": "Person",
-        "SocialSecurityNumber": "10987654321"
+        "partyUuid": "a1b2c3d4-0002-4000-8000-000000000002",
+        "name": "FIRST NAME LAST",
+        "organizationNumber": null,
+        "personId": "10987654321",
+        "type": "Person",
+        "partyId": 50001002,
+        "unitType": null,
+        "isDeleted": false,
+        "authorizedResources": []
       }
     ]
 """.trimIndent()
 
-val ALTINN_PERSON_1 = """
+val AUTHORIZED_PARTIES_1 = """
     [
       {
-        "Name": "ANOTHER PERSON",
-        "Type": "Person",
-        "SocialSecurityNumber": "11223344556"
+        "partyUuid": "a1b2c3d4-0003-4000-8000-000000000003",
+        "name": "ANOTHER PERSON",
+        "organizationNumber": null,
+        "personId": "11223344556",
+        "type": "Person",
+        "partyId": 50001003,
+        "unitType": null,
+        "isDeleted": false,
+        "authorizedResources": []
       },
       {
-        "Name": "RAMSUND OG ROGNAN REVISJON",
-        "Type": "Enterprise",
-        "OrganizationNumber": "910258028",
-        "OrganizationForm": "KF",
-        "Status": "Active"
+        "partyUuid": "a1b2c3d4-0004-4000-8000-000000000004",
+        "name": "RAMSUND OG ROGNAN REVISJON",
+        "organizationNumber": "910258028",
+        "personId": null,
+        "type": "Organization",
+        "partyId": 50001004,
+        "unitType": "KF",
+        "isDeleted": false,
+        "authorizedResources": ["datanorge-skrivetilgang"]
       },
       {
-        "Name": "SKATVAL OG BREIVIKBOTN",
-        "Type": "Enterprise",
-        "OrganizationNumber": "123456789",
-        "OrganizationForm": "STAT",
-        "Status": "Active"
+        "partyUuid": "a1b2c3d4-0005-4000-8000-000000000005",
+        "name": "SKATVAL OG BREIVIKBOTN",
+        "organizationNumber": "123456789",
+        "personId": null,
+        "type": "Organization",
+        "partyId": 50001005,
+        "unitType": "STAT",
+        "isDeleted": false,
+        "authorizedResources": ["datanorge-lesetilgang"]
       }
     ]
-""".trimIndent()
-
-val ALTINN_RIGHTS_0 = """
-    {
-        "Subject": {
-            "Name": "FIRST NAME LAST",
-            "Type": "Person",
-            "SocialSecurityNumber": "10987654321"
-        },
-        "Reportee": {
-            "Name": "KARMSUND OG KYSNESSTRAND REVISJON",
-            "Type": "Enterprise",
-            "OrganizationNumber": "920210023",
-            "Status": "Active"
-        },
-        "Rights": [
-            {
-                "RightID": 1018549,
-                "RightType": "Service",
-                "ServiceCode": "5755",
-                "ServiceEditionCode": 20,
-                "Action": "Read",
-                "RightSourceType": "RoleTypeRights",
-                "IsDelegatable": true
-            }
-        ]
-    }
-""".trimIndent()
-
-val ALTINN_RIGHTS_1 = """
-    {
-        "Subject": {
-            "Name": "ANOTHER PERSON",
-            "Type": "Person",
-            "SocialSecurityNumber": "11223344556"
-        },
-        "Reportee": {
-            "Name": "RAMSUND OG ROGNAN REVISJON",
-            "Type": "Enterprise",
-            "OrganizationNumber": "910258028",
-            "Status": "Active"
-        },
-        "Rights": [
-            {
-                "RightID": 1018548,
-                "RightType": "Service",
-                "ServiceCode": "5755",
-                "ServiceEditionCode": 20,
-                "Action": "Read",
-                "RightSourceType": "RoleTypeRights",
-                "IsDelegatable": true
-            }
-        ]
-    }
-""".trimIndent()
-
-val ALTINN_RIGHTS_2 = """
-    {
-        "Subject": {
-            "Name": "ANOTHER PERSON",
-            "Type": "Person",
-            "SocialSecurityNumber": "11223344556"
-        },
-        "Reportee": {
-            "Name": "SKATVAL OG BREIVIKBOTN",
-            "Type": "Enterprise",
-            "OrganizationNumber": "123456789",
-            "Status": "Active"
-        },
-        "Rights": [
-            {
-                "RightID": 1018547,
-                "RightType": "Service",
-                "ServiceCode": "5756",
-                "ServiceEditionCode": 20,
-                "Action": "Read",
-                "RightSourceType": "RoleTypeRights",
-                "IsDelegatable": true
-            }
-        ]
-    }
 """.trimIndent()

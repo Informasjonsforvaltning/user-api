@@ -69,13 +69,7 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 val person = AltinnPerson("First Last", ssn, listOf(ORG))
-                val rights = AltinnRightsResponse(
-                    AltinnSubject(
-                        name = person.name, socialSecurityNumber = ssn),
-                    reportee = AltinnReportee(name = ORG.name, organizationNumber = ORG.organizationNumber),
-                    rights = listOf(AltinnRights(serviceCode = "5977")
-                    )
-                )
+                val rights = listOf(RoleFDK(RoleFDK.ResourceType.Organization, ORG.organizationNumber!!, RoleFDK.Role.Admin))
 
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
                 whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
@@ -89,13 +83,7 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 val person = AltinnPerson("First Last", ssn, listOf(ORG))
-                val rights = AltinnRightsResponse(
-                    AltinnSubject(
-                        name = person.name, socialSecurityNumber = ssn),
-                    reportee = AltinnReportee(name = ORG.name, organizationNumber = ORG.organizationNumber),
-                    rights = listOf(AltinnRights(serviceCode = "5755")
-                    )
-                )
+                val rights = listOf(RoleFDK(RoleFDK.ResourceType.Organization, ORG.organizationNumber!!, RoleFDK.Role.Write))
 
                 whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
                 whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
@@ -120,18 +108,10 @@ class AltinnUser {
                 whenever(altinnAdapter.getPerson(ssn2, "5756")).thenReturn(AltinnPerson("First2 Last2", ssn2, listOf(orgNotInOrgFormWhitelist)))
 
                 whenever(altinnAdapter.getRights(ssn1, orgNotInOrgNrWhitelist.organizationNumber!!)).thenReturn(
-                    AltinnRightsResponse(
-                        AltinnSubject(name = "First1 Last1", socialSecurityNumber = ssn1),
-                        reportee = AltinnReportee(name = orgNotInOrgNrWhitelist.name, organizationNumber = orgNotInOrgNrWhitelist.organizationNumber),
-                        rights = listOf(AltinnRights(serviceCode = "5756"))
-                    )
+                    listOf(RoleFDK(RoleFDK.ResourceType.Organization, orgNotInOrgNrWhitelist.organizationNumber!!, RoleFDK.Role.Read))
                 )
                 whenever(altinnAdapter.getRights(ssn2, orgNotInOrgFormWhitelist.organizationNumber!!)).thenReturn(
-                    AltinnRightsResponse(
-                        AltinnSubject(name = "First2 Last2", socialSecurityNumber = ssn2),
-                        reportee = AltinnReportee(name = orgNotInOrgFormWhitelist.name, organizationNumber = orgNotInOrgFormWhitelist.organizationNumber),
-                        rights = listOf(AltinnRights(serviceCode = "5755"))
-                    )
+                    listOf(RoleFDK(RoleFDK.ResourceType.Organization, orgNotInOrgFormWhitelist.organizationNumber!!, RoleFDK.Role.Write))
                 )
 
                 val auth1 = altinnUserService.getAuthorities(ssn1)
