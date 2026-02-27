@@ -20,11 +20,6 @@ spec:
       containers:
         - name: user-api
           env:
-            - name: ALTINN_PROXY_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: commonurl
-                  key: ALTINN_PROXY_URL
             - name: ORGNR_WHITELIST
               valueFrom:
                 secretKeyRef:
@@ -50,11 +45,6 @@ spec:
                 secretKeyRef:
                   name: common
                   key: USER_API_KEY
-            - name: ALTINN_PROXY_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: fdk-altinn-proxy
-                  key: API_KEY
             - name: WRITE_GROUP_BRREG
               valueFrom:
                 secretKeyRef:
@@ -80,11 +70,11 @@ spec:
                 secretKeyRef:
                   name: user-api
                   key: SKATT_OIDC_READ_GROUP
-              - name: TERMS_AND_CONDITIONS_HOST
-                valueFrom:
-                  secretKeyRef:
-                    name: commonurl
-                    key: FDK_TERMS_AND_CONDITIONS_BASE_URI
+            - name: TERMS_AND_CONDITIONS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: commonurl
+                  key: FDK_TERMS_AND_CONDITIONS_BASE_URI
             - name: MASKINPORTEN_API_HOST
               valueFrom:
                 secretKeyRef:

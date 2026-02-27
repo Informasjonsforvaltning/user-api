@@ -19,14 +19,14 @@ class AltinnUserService (
 ) {
 
     suspend fun getUser(id: String): AltinnPerson? =
-        altinnAdapter.getPerson(id, "")
+        altinnAdapter.getPerson(id)
 
     fun getSysAdminAuthorities(id: String): List<String> =
         if (whitelists.adminList.contains(id)) listOf(ROOT_ADMIN.toString())
         else emptyList()
 
     suspend fun organizationsForService(ssn: String): List<AltinnOrganization> {
-        val person = altinnAdapter.getPerson(ssn, "")
+        val person = altinnAdapter.getPerson(ssn)
         return if(person?.socialSecurityNumber != null) {
             person.organizations
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }

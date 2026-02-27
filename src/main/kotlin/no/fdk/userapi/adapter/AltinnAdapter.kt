@@ -16,7 +16,7 @@ class AltinnAdapter(
     private val accessManagementAdapter: AccessManagementAdapter
 ) {
 
-    suspend fun getPerson(socialSecurityNumber: String, serviceCode: String): AltinnPerson? {
+    suspend fun getPerson(socialSecurityNumber: String): AltinnPerson? {
         if (hostProperties.altinnAccessManagementHost == null) {
             logger.debug("Altinn Access Management host not configured")
             return null

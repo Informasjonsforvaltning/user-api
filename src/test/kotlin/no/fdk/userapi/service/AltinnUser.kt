@@ -36,7 +36,7 @@ class AltinnUser {
         fun personNotFoundReturnsEmptyString() {
             runTest {
                 val ssn = "12345678901"
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(null)
                 assertEquals("", altinnUserService.getAuthorities(ssn))
             }
         }
@@ -47,7 +47,7 @@ class AltinnUser {
                 val ssn = "12345678901"
                 val personNoSSN = AltinnPerson("First Last", null, listOf(ORG))
 
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(personNoSSN)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(personNoSSN)
 
                 assertEquals("", altinnUserService.getAuthorities(ssn))
             }
@@ -59,7 +59,7 @@ class AltinnUser {
                 val ssn = "23076102252"
                 val person = AltinnPerson("First Last", ssn, emptyList())
 
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(person)
 
                 assertEquals(SYS_ADMIN, altinnUserService.getAuthorities(ssn))
             }
@@ -72,7 +72,7 @@ class AltinnUser {
                 val person = AltinnPerson("First Last", ssn, listOf(ORG))
                 val rights = listOf(RoleFDK(RoleFDK.ResourceType.Organization, ORG.organizationNumber!!, RoleFDK.Role.Admin))
 
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(person)
                 whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
                 assertEquals(orgAdmin(ORG.organizationNumber), altinnUserService.getAuthorities(ssn))
@@ -86,7 +86,7 @@ class AltinnUser {
                 val person = AltinnPerson("First Last", ssn, listOf(ORG))
                 val rights = listOf(RoleFDK(RoleFDK.ResourceType.Organization, ORG.organizationNumber!!, RoleFDK.Role.Write))
 
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(person)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(person)
                 whenever(altinnAdapter.getRights(ssn, ORG.organizationNumber!!)).thenReturn(rights)
 
                 assertEquals(orgWrite(ORG.organizationNumber as String), altinnUserService.getAuthorities(ssn))
@@ -105,8 +105,8 @@ class AltinnUser {
                     name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise
                 )
 
-                whenever(altinnAdapter.getPerson(eq(ssn1), any())).thenReturn(AltinnPerson("First1 Last1", ssn1, listOf(orgNotInOrgNrWhitelist)))
-                whenever(altinnAdapter.getPerson(eq(ssn2), any())).thenReturn(AltinnPerson("First2 Last2", ssn2, listOf(orgNotInOrgFormWhitelist)))
+                whenever(altinnAdapter.getPerson(eq(ssn1))).thenReturn(AltinnPerson("First1 Last1", ssn1, listOf(orgNotInOrgNrWhitelist)))
+                whenever(altinnAdapter.getPerson(eq(ssn2))).thenReturn(AltinnPerson("First2 Last2", ssn2, listOf(orgNotInOrgFormWhitelist)))
 
                 whenever(altinnAdapter.getRights(ssn1, orgNotInOrgNrWhitelist.organizationNumber!!)).thenReturn(
                     listOf(RoleFDK(RoleFDK.ResourceType.Organization, orgNotInOrgNrWhitelist.organizationNumber!!, RoleFDK.Role.Read))
@@ -132,7 +132,7 @@ class AltinnUser {
         fun personNotFoundReturnsEmptyList() {
             runTest {
                 val ssn = "12345678901"
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(null)
+                whenever(altinnAdapter.getPerson(any())).thenReturn(null)
                 assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
             }
         }
@@ -141,7 +141,7 @@ class AltinnUser {
         fun handlesEmptyOrgList() {
             runTest {
                 val ssn = "12345678901"
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
+                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
                 assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
             }
         }
@@ -159,7 +159,7 @@ class AltinnUser {
                 val subOrg1 = AltinnOrganization(
                     name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Business
                 )
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
+                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
                 assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn))
             }
         }
@@ -174,7 +174,7 @@ class AltinnUser {
                 val subOrg = AltinnOrganization(
                     name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
                 )
-                whenever(altinnAdapter.getPerson(any(), any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
+                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
                 assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn))
             }
         }
