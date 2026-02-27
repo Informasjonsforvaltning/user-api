@@ -32,5 +32,4 @@ class UsersController (
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
             }
         }
-
 }
