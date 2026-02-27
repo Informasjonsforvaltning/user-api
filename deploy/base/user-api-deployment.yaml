@@ -80,11 +80,26 @@ spec:
                 secretKeyRef:
                   name: user-api
                   key: SKATT_OIDC_READ_GROUP
-            - name: TERMS_AND_CONDITIONS_HOST
+              - name: TERMS_AND_CONDITIONS_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: commonurl
+                    key: FDK_TERMS_AND_CONDITIONS_BASE_URI
+            - name: MASKINPORTEN_API_HOST
               valueFrom:
                 secretKeyRef:
-                  name: commonurl
-                  key: FDK_TERMS_AND_CONDITIONS_BASE_URI
+                  name: user-api
+                  key: MASKINPORTEN_API_HOST
+            - name: MASKINPORTEN_SCOPE
+              valueFrom:
+                secretKeyRef:
+                  name: user-api
+                  key: MASKINPORTEN_SCOPE
+            - name: ALTINN_ACCESS_MANAGEMENT_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: user-api
+                  key: ALTINN_ACCESS_MANAGEMENT_HOST
           image: user-api
           imagePullPolicy: Always
           ports:

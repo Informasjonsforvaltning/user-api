@@ -9,7 +9,9 @@ logging:
   level.org.springframework.web: WARN
 application:
   hosts:
-    altinnProxyHost: ${ALTINN_PROXY_HOST:http://fdk-nginx-altinn-proxy:8080}
+    maskinportenApiHost: ${MASKINPORTEN_API_HOST:http://localhost:8080}
+    maskinportenScope: ${MASKINPORTEN_SCOPE:altinn:accessmanagement/authorizedparties.resourceowner}
+    altinnAccessManagementHost: ${ALTINN_ACCESS_MANAGEMENT_HOST:https://platform.tt02.altinn.no/accessmanagement/api/v1}
     termsHost: ${TERMS_AND_CONDITIONS_HOST:http://terms-and-conditions:8080}
   whitelists:
     # 920210023   /* this matches in prod system "GJELDSREGISTERET AS”*/
@@ -20,7 +22,6 @@ application:
   secrets:
     ssoApiKey: ${SSO_API_KEY}
     userApiKey: ${USER_API_KEY}
-    altinnProxyKey: ${ALTINN_PROXY_API_KEY}
   brreg:
     orgnr: ${ORGNR_BRREG:974760673}
     adminGroupID: ${ADMIN_GROUP_BRREG:123}
@@ -55,12 +56,13 @@ spring:
   config.activate.on-profile: develop
 application:
   hosts:
-    altinnProxyHost: http://localhost:8128
+    maskinportenApiHost: http://localhost:8085
+    maskinportenScope: altinn:accessmanagement/authorizedparties.resourceowner
+    altinnAccessManagementHost: http://localhost:5555/accessmanagement/api/v1
     termsHost: http://localhost:8182
   secrets:
     ssoApiKey: ssosecret
     userApiKey: userapisecret
-    altinnProxyKey: proxysecret
 server.port: 8125
 
 ---
@@ -68,7 +70,9 @@ spring:
   config.activate.on-profile: contract-test
 application:
   hosts:
-    altinnProxyHost: http://localhost:5555/altinn
+    maskinportenApiHost: http://localhost:5555
+    maskinportenScope: altinn:accessmanagement/authorizedparties.resourceowner
+    altinnAccessManagementHost: http://localhost:5555/accessmanagement/api/v1
     termsHost: http://localhost:5555/terms
   whitelists:
     adminList: ${ADMIN_LIST:10987654321}
@@ -76,5 +80,4 @@ application:
   secrets:
     ssoApiKey: ssosecret
     userApiKey: userapisecret
-    altinnProxyKey: proxysecret
 server.port: 5050

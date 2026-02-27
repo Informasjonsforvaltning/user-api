@@ -18,8 +18,6 @@ import java.time.Duration
 
 private val logger = LoggerFactory.getLogger(MaskinportenAdapter::class.java)
 
-const val ALTINN_SCOPES = "altinn:accessmanagement/authorizedparties.resourceowner"
-
 @Service
 class MaskinportenAdapter(
     private val hostProperties: HostProperties
@@ -56,10 +54,12 @@ class MaskinportenAdapter(
             logger.debug("Maskinporten API host not configured, skipping token request")
             return@withContext null
         }
-        val scopeParam = scope?.takeIf { it.isNotBlank() } ?: ALTINN_SCOPES
+        val scopeParam = scope?.takeIf { it.isNotBlank() }
+            ?: hostProperties.maskinportenScope?.takeIf { it.isNotBlank() }
         return@withContext try {
             val uriSpec = client.get().uri { builder ->
-                builder.path("/api/maskinporten/token").queryParam("scope", scopeParam)
+                builder.path("/api/maskinporten/token")
+                scopeParam?.let { builder.queryParam("scope", it) }
                 builder.build()
             }
             uriSpec
