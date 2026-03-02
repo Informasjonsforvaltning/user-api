@@ -4,3 +4,6 @@ kind: Kustomization
 namespace: prod
 resources:
   - ../base
+
+patches:
+  - path: env.yaml
