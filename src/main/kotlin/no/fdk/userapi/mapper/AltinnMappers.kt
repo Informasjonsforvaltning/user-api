@@ -1,61 +1,49 @@
 package no.fdk.userapi.mapper
 
+import no.fdk.userapi.model.AuthorizedParty
 import no.fdk.userapi.model.*
 
-fun AltinnPerson.toUserFDK(): UserFDK? {
-    val names: List<String> = name
-        ?.split("\\s+".toRegex())
-        ?.toList()
-        ?: emptyList()
-
-    return if (socialSecurityNumber != null) {
-        UserFDK(
-            id = socialSecurityNumber,
-            firstName = names.subList(0, names.size - 1).joinToString(" "),
-            lastName = names.last()
-        )
-    } else null
+fun List<AuthorizedParty>.toAltinnPerson(ssn: String): AltinnPerson? {
+    val person = firstOrNull { it.type == "Person" && it.personId == ssn } ?: return null
+    val orgs = filter { it.type == "Organization" && it.organizationNumber != null && !it.isDeleted }
+        .map { it.toAltinnOrganization() }
+    return AltinnPerson(person.name, person.personId, orgs)
 }
 
-fun AltinnSubject.toPerson(organizations: List<AltinnOrganization>): AltinnPerson =
-    AltinnPerson(
-        name,
-        socialSecurityNumber,
-        organizations
-    )
-
-fun AltinnSubject.toOrganization(): AltinnOrganization =
+fun AuthorizedParty.toAltinnOrganization(): AltinnOrganization =
     AltinnOrganization(
-        name,
-        organizationForm,
-        organizationNumber,
-        type = typeStringToOrgType(type)
+        name = name,
+        organizationForm = unitType,
+        organizationNumber = organizationNumber,
+        type = when (unitType?.uppercase()) {
+            "AS", "NU", "BEDR", "KF" -> AltinnReporteeType.Enterprise
+            else -> AltinnReporteeType.Business
+        }
     )
 
-fun isPid(username: String): Boolean =
-    username.matches("^\\d{11}$".toRegex())
+fun List<AuthorizedParty>.toFDKRoles(ssn: String, orgNumber: String): List<RoleFDK> {
+    val org = firstOrNull { it.type == "Organization" && it.organizationNumber == orgNumber } ?: return emptyList()
+    return org.authorizedResources.orEmpty()
+        .mapNotNull { resourceIdToRole(it)?.let { role -> RoleFDK(RoleFDK.ResourceType.Organization, orgNumber, role) } }
+        .distinct()
+}
 
-fun AltinnRightsResponse.toFDKRoles(): List<RoleFDK> =
-    if (reportee.organizationNumber != null) {
-        rights.mapNotNull {
-            serviceCodeToRole(it.serviceCode)
-                ?.let { role -> RoleFDK(RoleFDK.ResourceType.Organization, reportee.organizationNumber, role) }
-        }.distinct()
-    } else emptyList()
+fun AltinnPerson.toUserFDK(): UserFDK? {
+    if (socialSecurityNumber == null) return null
+    val names = name?.split("\\s+".toRegex())?.toList() ?: emptyList()
+    if (names.isEmpty()) return null
+    return UserFDK(
+        id = socialSecurityNumber!!,
+        firstName = names.dropLast(1).joinToString(" "),
+        lastName = names.last()
+    )
+}
 
-private fun serviceCodeToRole(serviceCode: String?): RoleFDK.Role? =
-    when(serviceCode) {
-        null -> null
-        "5977" -> RoleFDK.Role.Admin
-        "5755" -> RoleFDK.Role.Write
-        "5756" -> RoleFDK.Role.Read
-        else -> null
-    }
+fun isPid(username: String): Boolean = username.matches(Regex("^\\d{11}$"))
 
-private fun typeStringToOrgType(type: String?): AltinnReporteeType? =
-    when(type) {
-        null -> null
-        AltinnReporteeType.Enterprise.name -> AltinnReporteeType.Enterprise
-        AltinnReporteeType.Business.name -> AltinnReporteeType.Business
-        else -> null
-    }
+private fun resourceIdToRole(resourceId: String?): RoleFDK.Role? = when (resourceId) {
+    "datanorge-lesetilgang" -> RoleFDK.Role.Read
+    "datanorge-skrivetilgang" -> RoleFDK.Role.Write
+    "datanorge-virksomhetsadministrator" -> RoleFDK.Role.Admin
+    else -> null
+}
