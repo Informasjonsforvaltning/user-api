@@ -16,42 +16,21 @@ fun startMockServer() {
                 .willReturn(ok()))
 
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=12345678901&servicecode=5755&serviceedition=1&\$top=1000"))
-                .willReturn(aResponse().withStatus(404)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=12345678901&servicecode=5756&serviceedition=1&\$top=1000"))
-                .willReturn(aResponse().withStatus(404)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_0)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=5755&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_0)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=5756&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_0)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=10987654321&servicecode=5977&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_0)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_1)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&servicecode=5755&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_1)))
-        mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/reportees?ForceEIAuthentication&subject=11223344556&servicecode=5756&serviceedition=1&\$top=1000"))
-                .willReturn(okJson(ALTINN_PERSON_1)))
+            get(urlPathMatching("/api/maskinporten/token.*"))
+                .willReturn(okJson("""{"access_token":"contract-test-token","token_type":"Bearer","expires_in":3600,"scope":"altinn:accessmanagement/authorizedparties.resourceowner"}""")))
 
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=10987654321&reportee=920210023&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27"))
-                .willReturn(okJson(ALTINN_RIGHTS_0)))
+            post(urlPathEqualTo("/accessmanagement/api/v1/resourceowner/authorizedparties"))
+                .withRequestBody(containing("12345678901"))
+                .willReturn(okJson("[]")))
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=11223344556&reportee=910258028&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27"))
-                .willReturn(okJson(ALTINN_RIGHTS_1)))
+            post(urlPathEqualTo("/accessmanagement/api/v1/resourceowner/authorizedparties"))
+                .withRequestBody(containing("10987654321"))
+                .willReturn(okJson(AUTHORIZED_PARTIES_0)))
         mockserver.stubFor(
-            get(urlEqualTo("/altinn/api/serviceowner/authorization/rights?ForceEIAuthentication&subject=11223344556&reportee=123456789&%24filter=ServiceCode%20eq%20%275755%27%20or%20ServiceCode%20eq%20%275756%27%20or%20ServiceCode%20eq%20%275977%27"))
-                .willReturn(okJson(ALTINN_RIGHTS_2)))
+            post(urlPathEqualTo("/accessmanagement/api/v1/resourceowner/authorizedparties"))
+                .withRequestBody(containing("11223344556"))
+                .willReturn(okJson(AUTHORIZED_PARTIES_1)))
 
         mockserver.stubFor(
             get(urlEqualTo("/terms/terms/org?organizations=920210023"))
