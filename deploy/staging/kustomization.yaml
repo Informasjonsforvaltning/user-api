@@ -4,3 +4,6 @@ kind: Kustomization
 namespace: staging
 resources:
   - ../base
+
+patches:
+  - path: env.yaml
