@@ -5,7 +5,7 @@ import no.fdk.userapi.model.*
 
 fun List<AuthorizedParty>.toAltinnPerson(ssn: String): AltinnPerson? {
     val person = firstOrNull { it.type == "Person" && it.personId == ssn } ?: return null
-    val orgs = filter { it.type == "Organization" && it.organizationNumber != null && !it.isDeleted }
+    val orgs = filter { it.type == "Organization" && it.organizationNumber != null && it.isDeleted != true }
         .map { it.toAltinnOrganization() }
     return AltinnPerson(person.name, person.personId, orgs)
 }

@@ -44,6 +44,7 @@ val AUTHORIZED_PARTIES_0 = """
         "partyId": 50001001,
         "unitType": "ORGL",
         "isDeleted": false,
+        "onlyHierarchyElementWithNoAccess": false,
         "authorizedResources": ["datanorge-skrivetilgang"]
       },
       {
@@ -55,6 +56,7 @@ val AUTHORIZED_PARTIES_0 = """
         "partyId": 50001002,
         "unitType": null,
         "isDeleted": false,
+        "onlyHierarchyElementWithNoAccess": false,
         "authorizedResources": []
       }
     ]
@@ -71,6 +73,7 @@ val AUTHORIZED_PARTIES_1 = """
         "partyId": 50001003,
         "unitType": null,
         "isDeleted": false,
+        "onlyHierarchyElementWithNoAccess": false,
         "authorizedResources": []
       },
       {
@@ -82,6 +85,7 @@ val AUTHORIZED_PARTIES_1 = """
         "partyId": 50001004,
         "unitType": "KF",
         "isDeleted": false,
+        "onlyHierarchyElementWithNoAccess": false,
         "authorizedResources": ["datanorge-skrivetilgang"]
       },
       {
@@ -93,6 +97,7 @@ val AUTHORIZED_PARTIES_1 = """
         "partyId": 50001005,
         "unitType": "STAT",
         "isDeleted": false,
+        "onlyHierarchyElementWithNoAccess": false,
         "authorizedResources": ["datanorge-lesetilgang"]
       }
     ]
