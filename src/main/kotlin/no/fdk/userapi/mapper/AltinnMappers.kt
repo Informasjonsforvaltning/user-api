@@ -15,10 +15,7 @@ fun AuthorizedParty.toAltinnOrganization(): AltinnOrganization =
         name = name,
         organizationForm = unitType,
         organizationNumber = organizationNumber,
-        type = when (unitType?.uppercase()) {
-            "AS", "NU", "BEDR", "KF" -> AltinnReporteeType.Enterprise
-            else -> AltinnReporteeType.Business
-        }
+        type = AltinnReporteeType.Organization
     )
 
 fun List<AuthorizedParty>.toFDKRoles(ssn: String, orgNumber: String): List<RoleFDK> {

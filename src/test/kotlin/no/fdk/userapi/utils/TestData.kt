@@ -24,7 +24,7 @@ val ORG: AltinnOrganization = AltinnOrganization(
     name = "Organization Name",
     organizationForm = "ORGL",
     organizationNumber = "920210023",
-    type = AltinnReporteeType.Enterprise
+    type = AltinnReporteeType.Organization
 )
 
 val ORG_NR_LIST = listOf("920210023", "910258028", "123456789")

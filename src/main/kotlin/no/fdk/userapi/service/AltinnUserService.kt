@@ -4,7 +4,6 @@ import no.fdk.userapi.adapter.AltinnAdapter
 import no.fdk.userapi.configuration.WhitelistProperties
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.AltinnReporteeType
 import no.fdk.userapi.model.RoleFDK
 import no.fdk.userapi.model.RoleFDK.Companion.ROOT_ADMIN
 import org.slf4j.LoggerFactory
@@ -45,12 +44,7 @@ class AltinnUserService (
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
 
     private fun isWhitelistedOrgForm(org: AltinnOrganization) =
-        when {
-            org.type != AltinnReporteeType.Enterprise -> false
-            org.organizationForm == null -> false
-            whitelists.orgFormWhitelist.contains(org.organizationForm) -> true
-            else -> false
-        }
+        org.organizationForm != null && whitelists.orgFormWhitelist.contains(org.organizationForm)
 
     suspend fun getAuthorities(ssn: String): String {
         val resourceRoleTokens: MutableList<String> = mutableListOf()

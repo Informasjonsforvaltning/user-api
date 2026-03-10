@@ -99,10 +99,10 @@ class AltinnUser {
                 val ssn1 = "23076102252"
                 val ssn2 = "12345678901"
                 val orgNotInOrgNrWhitelist = AltinnOrganization(
-                    name = "Not in orgnr list", organizationNumber = "987654321", organizationForm = "STAT", type = AltinnReporteeType.Enterprise
+                    name = "Not in orgnr list", organizationNumber = "987654321", organizationForm = "STAT", type = AltinnReporteeType.Organization
                 )
                 val orgNotInOrgFormWhitelist = AltinnOrganization(
-                    name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise
+                    name = "Not in org form list", organizationNumber = "123456789", organizationForm = "INVALID", type = AltinnReporteeType.Organization
                 )
 
                 whenever(altinnAdapter.getPerson(eq(ssn1))).thenReturn(AltinnPerson("First1 Last1", ssn1, listOf(orgNotInOrgNrWhitelist)))
@@ -151,13 +151,13 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 val org = AltinnOrganization(
-                    name = "Org", organizationNumber = "123456789", organizationForm = "STAT", type = AltinnReporteeType.Enterprise
+                    name = "Org", organizationNumber = "123456789", organizationForm = "STAT", type = AltinnReporteeType.Organization
                 )
                 val subOrg0 = AltinnOrganization(
-                    name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
+                    name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Organization
                 )
                 val subOrg1 = AltinnOrganization(
-                    name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Business
+                    name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Organization
                 )
                 whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
                 assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn))
@@ -169,10 +169,10 @@ class AltinnUser {
             runTest {
                 val ssn = "12345678901"
                 val org = AltinnOrganization(
-                    name = "Org", organizationNumber = "987654321", organizationForm = "INVALID", type = AltinnReporteeType.Enterprise
+                    name = "Org", organizationNumber = "987654321", organizationForm = "INVALID", type = AltinnReporteeType.Organization
                 )
                 val subOrg = AltinnOrganization(
-                    name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Business
+                    name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Organization
                 )
                 whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
                 assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn))

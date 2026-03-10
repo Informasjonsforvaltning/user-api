@@ -18,5 +18,5 @@ data class AltinnPerson (
 )
 
 enum class AltinnReporteeType {
-    Business, Enterprise, Person
+    Organization, Person
 }
