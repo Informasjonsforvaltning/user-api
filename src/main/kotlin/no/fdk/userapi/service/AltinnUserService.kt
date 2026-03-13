@@ -2,17 +2,14 @@ package no.fdk.userapi.service
 
 import no.fdk.userapi.adapter.AltinnAdapter
 import no.fdk.userapi.configuration.WhitelistProperties
-import no.fdk.userapi.mapper.toFDKRoles
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.AltinnReporteeType
 import no.fdk.userapi.model.RoleFDK
 import no.fdk.userapi.model.RoleFDK.Companion.ROOT_ADMIN
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 private val logger = LoggerFactory.getLogger(AltinnUserService::class.java)
-val SERVICE_CODES = listOf("5977", "5755", "5756")
 
 @Service
 class AltinnUserService (
@@ -20,15 +17,15 @@ class AltinnUserService (
     private val altinnAdapter: AltinnAdapter
 ) {
 
-    suspend fun getUser(id: String, serviceCode: String): AltinnPerson? =
-        altinnAdapter.getPerson(id, serviceCode)
+    suspend fun getUser(id: String): AltinnPerson? =
+        altinnAdapter.getPerson(id)
 
     fun getSysAdminAuthorities(id: String): List<String> =
         if (whitelists.adminList.contains(id)) listOf(ROOT_ADMIN.toString())
         else emptyList()
 
-    suspend fun organizationsForService(ssn: String, serviceCode: String): List<AltinnOrganization> {
-        val person = altinnAdapter.getPerson(ssn, serviceCode)
+    suspend fun organizationsForService(ssn: String): List<AltinnOrganization> {
+        val person = altinnAdapter.getPerson(ssn)
         return if(person?.socialSecurityNumber != null) {
             person.organizations
                 .filter { org: AltinnOrganization -> org.organizationNumber != null }
@@ -41,20 +38,13 @@ class AltinnUserService (
     }
 
     suspend fun authForOrganization(ssn: String, org: AltinnOrganization): List<String> =
-        altinnAdapter.getRights(ssn, org.organizationNumber!!)
-            .let { response -> response?.toFDKRoles() ?: emptyList() }
-            .map { obj: RoleFDK -> obj.toString() }
+        (altinnAdapter.getRights(ssn, org.organizationNumber!!) ?: emptyList()).map { it.toString() }
 
     private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
 
     private fun isWhitelistedOrgForm(org: AltinnOrganization) =
-        when {
-            org.type != AltinnReporteeType.Enterprise -> false
-            org.organizationForm == null -> false
-            whitelists.orgFormWhitelist.contains(org.organizationForm) -> true
-            else -> false
-        }
+        org.organizationForm != null && whitelists.orgFormWhitelist.contains(org.organizationForm)
 
     suspend fun getAuthorities(ssn: String): String {
         val resourceRoleTokens: MutableList<String> = mutableListOf()
@@ -68,11 +58,8 @@ class AltinnUserService (
     }
 
     private suspend fun allOrganizations(ssn: String): List<AltinnOrganization> {
-        val orgTasks = SERVICE_CODES.map {
-            organizationsForService(ssn, it)
-        }
         logger.debug("Getting all organizations, running coroutines")
-        return orgTasks.flatten()
+        return organizationsForService(ssn)
     }
 
     private suspend fun organizationAuthorities(ssn: String): List<String> {
@@ -84,8 +71,7 @@ class AltinnUserService (
     }
 
     suspend fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
-        val getUserTasks = SERVICE_CODES.map { getUser(ssn, it) }
         logger.debug("Getting organizations for terms, running coroutines")
-        return getUserTasks.flatMap { it?.organizations ?: emptyList() }
+        return getUser(ssn)?.organizations ?: emptyList()
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class SecurityProperties (
     val ssoApiKey: String,
     val userApiKey: String,
-    val altinnProxyKey: String
+    val maskinportenApiKey: String? = null
 )

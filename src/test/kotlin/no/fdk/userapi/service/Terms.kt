@@ -61,8 +61,8 @@ class Terms {
         @Test
         fun severalOrgs() {
             runTest {
-                val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Enterprise)
-                val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Enterprise)
+                val orgNotAccepted = AltinnOrganization("Org Not Accepted", "ORGL", "123456789", type = AltinnReporteeType.Organization)
+                val orgAcceptedOld = AltinnOrganization("Org Accepted Old", "ORGL", "987654321", type = AltinnReporteeType.Organization)
 
                 val person = AltinnPerson(
                     socialSecurityNumber = "23076102252",
