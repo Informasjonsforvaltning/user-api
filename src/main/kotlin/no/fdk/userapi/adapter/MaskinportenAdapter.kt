@@ -7,6 +7,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.withContext
 import no.fdk.userapi.configuration.HostProperties
+import no.fdk.userapi.configuration.SecurityProperties
 import no.fdk.userapi.model.TokenResponse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,7 +21,8 @@ private val logger = LoggerFactory.getLogger(MaskinportenAdapter::class.java)
 
 @Service
 class MaskinportenAdapter(
-    private val hostProperties: HostProperties
+    private val hostProperties: HostProperties,
+    private val securityProperties: SecurityProperties
 ) {
     private val baseUrl: String?
         get() = hostProperties.maskinportenApiHost
@@ -57,10 +59,13 @@ class MaskinportenAdapter(
         val scopeParam = scope?.takeIf { it.isNotBlank() }
             ?: hostProperties.maskinportenScope?.takeIf { it.isNotBlank() }
         return@withContext try {
-            val uriSpec = client.get().uri { builder ->
+            var uriSpec = client.get().uri { builder ->
                 builder.path("/api/maskinporten/token")
                 scopeParam?.let { builder.queryParam("scope", it) }
                 builder.build()
+            }
+            securityProperties.maskinportenApiKey?.takeIf { it.isNotBlank() }?.let { key ->
+                uriSpec = uriSpec.header("X-API-Key", key)
             }
             uriSpec
                 .retrieve()
