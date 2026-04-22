@@ -4,7 +4,6 @@ import no.fdk.userapi.mapper.isPid
 import no.fdk.userapi.mapper.toUserFDK
 import no.fdk.userapi.model.UserFDK
 import no.fdk.userapi.service.AltinnUserService
-import no.fdk.userapi.service.SERVICE_CODES
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,11 +26,10 @@ class UsersController (
         when {
             !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
             else -> {
-                altinnUserService.getUser(id, SERVICE_CODES.first())
+                altinnUserService.getUser(id)
                     ?.toUserFDK()
                     ?.let { ResponseEntity(it, HttpStatus.OK) }
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
             }
         }
-
 }
