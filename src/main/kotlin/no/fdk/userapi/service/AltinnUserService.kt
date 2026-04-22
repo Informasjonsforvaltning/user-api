@@ -2,9 +2,10 @@ package no.fdk.userapi.service
 
 import no.fdk.userapi.adapter.AltinnAdapter
 import no.fdk.userapi.configuration.WhitelistProperties
+import no.fdk.userapi.mapper.toAltinnPerson
+import no.fdk.userapi.mapper.toFDKRoles
 import no.fdk.userapi.model.AltinnOrganization
 import no.fdk.userapi.model.AltinnPerson
-import no.fdk.userapi.model.RoleFDK
 import no.fdk.userapi.model.RoleFDK.Companion.ROOT_ADMIN
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -26,15 +27,7 @@ class AltinnUserService (
 
     suspend fun organizationsForService(ssn: String): List<AltinnOrganization> {
         val person = altinnAdapter.getPerson(ssn)
-        return if(person?.socialSecurityNumber != null) {
-            person.organizations
-                .filter { org: AltinnOrganization -> org.organizationNumber != null }
-                .filter { org: AltinnOrganization ->
-                    // Organizations should either have an acceptable organization form
-                    // or be specifically allowed through orgNrWhitelist
-                    isWhitelistedOrgNumber(org) || isWhitelistedOrgForm(org)
-                }
-        } else emptyList()
+        return organizationsMatchingServiceWhitelists(person)
     }
 
     suspend fun authForOrganization(ssn: String, org: AltinnOrganization): List<String> =
@@ -57,18 +50,25 @@ class AltinnUserService (
         return resourceRoleTokens.distinct().joinToString(",")
     }
 
-    private suspend fun allOrganizations(ssn: String): List<AltinnOrganization> {
-        logger.debug("Getting all organizations, running coroutines")
-        return organizationsForService(ssn)
+    private suspend fun organizationAuthorities(ssn: String): List<String> {
+        val parties = altinnAdapter.getAuthorizedParties(ssn) ?: return emptyList()
+        val person = parties.toAltinnPerson(ssn) ?: return emptyList()
+        if (person.socialSecurityNumber == null) return emptyList()
+        val orgs = organizationsMatchingServiceWhitelists(person)
+        logger.debug("Getting organization authorities from single authorized-parties response")
+        return orgs.flatMap { org ->
+            parties.toFDKRoles(ssn, org.organizationNumber!!).orEmpty().map { it.toString() }
+        }
     }
 
-    private suspend fun organizationAuthorities(ssn: String): List<String> {
-        val rightsTasks = allOrganizations(ssn).map {
-            authForOrganization(ssn, it)
-        }
-        logger.debug("Getting organization authorities, running coroutines")
-        return rightsTasks.flatten()
-    }
+    private fun organizationsMatchingServiceWhitelists(person: AltinnPerson?): List<AltinnOrganization> =
+        if (person?.socialSecurityNumber != null) {
+            person.organizations
+                .filter { org: AltinnOrganization -> org.organizationNumber != null }
+                .filter { org: AltinnOrganization ->
+                    isWhitelistedOrgNumber(org) || isWhitelistedOrgForm(org)
+                }
+        } else emptyList()
 
     suspend fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
         logger.debug("Getting organizations for terms, running coroutines")
