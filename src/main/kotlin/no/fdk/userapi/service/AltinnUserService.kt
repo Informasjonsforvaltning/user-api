@@ -30,9 +30,6 @@ class AltinnUserService (
         return organizationsMatchingServiceWhitelists(person)
     }
 
-    suspend fun authForOrganization(ssn: String, org: AltinnOrganization): List<String> =
-        (altinnAdapter.getRights(ssn, org.organizationNumber!!) ?: emptyList()).map { it.toString() }
-
     private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
 
