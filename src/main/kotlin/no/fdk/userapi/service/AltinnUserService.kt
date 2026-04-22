@@ -25,11 +25,6 @@ class AltinnUserService (
         if (whitelists.adminList.contains(id)) listOf(ROOT_ADMIN.toString())
         else emptyList()
 
-    suspend fun organizationsForService(ssn: String): List<AltinnOrganization> {
-        val person = altinnAdapter.getPerson(ssn)
-        return organizationsMatchingServiceWhitelists(person)
-    }
-
     private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
 

@@ -150,28 +150,21 @@ class AltinnUser {
 
     }
     @Nested
-    internal inner class PersonOrganizations {
+    internal inner class OrganizationWhitelistForAuthorities {
 
         @Test
-        fun personNotFoundReturnsEmptyList() {
+        fun personWithNoOrganizationsYieldsNoOrgAuthorities() {
             runTest {
                 val ssn = "12345678901"
-                whenever(altinnAdapter.getPerson(any())).thenReturn(null)
-                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
+                whenever(altinnAdapter.getAuthorizedParties(any())).thenReturn(
+                    authorizedPartiesForPerson(ssn, organizationsWithResources = emptyList())
+                )
+                assertEquals("", altinnUserService.getAuthorities(ssn))
             }
         }
 
         @Test
-        fun handlesEmptyOrgList() {
-            runTest {
-                val ssn = "12345678901"
-                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, emptyList()))
-                assertEquals(emptyList(), altinnUserService.organizationsForService(ssn))
-            }
-        }
-
-        @Test
-        fun whitelistedSubOrgIsIncluded() {
+        fun onlyWhitelistedOrganizationsGetRoleTokens() {
             runTest {
                 val ssn = "12345678901"
                 val org = AltinnOrganization(
@@ -183,13 +176,25 @@ class AltinnUser {
                 val subOrg1 = AltinnOrganization(
                     name = "Non whitelisted suborg", organizationNumber = "987654321", organizationForm = "BEDR", type = AltinnReporteeType.Organization
                 )
-                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg0, subOrg1)))
-                assertEquals(listOf(org, subOrg0), altinnUserService.organizationsForService(ssn))
+                whenever(altinnAdapter.getAuthorizedParties(any())).thenReturn(
+                    authorizedPartiesForPerson(
+                        ssn,
+                        organizationsWithResources = listOf(
+                            org to listOf("datanorge-lesetilgang"),
+                            subOrg0 to listOf("datanorge-lesetilgang"),
+                            subOrg1 to listOf("datanorge-lesetilgang")
+                        )
+                    )
+                )
+                val auth = altinnUserService.getAuthorities(ssn)
+                assertTrue { auth.contains(orgRead("123456789")) }
+                assertTrue { auth.contains(orgRead("920210023")) }
+                assertTrue { !auth.contains(orgRead("987654321")) }
             }
         }
 
         @Test
-        fun subOrgOfNonWhitelistedIsStillIncluded() {
+        fun whitelistedChildOrgGetsRolesEvenIfParentOrgNotWhitelisted() {
             runTest {
                 val ssn = "12345678901"
                 val org = AltinnOrganization(
@@ -198,11 +203,19 @@ class AltinnUser {
                 val subOrg = AltinnOrganization(
                     name = "Whitelisted suborg", organizationNumber = "920210023", organizationForm = "BEDR", type = AltinnReporteeType.Organization
                 )
-                whenever(altinnAdapter.getPerson(any())).thenReturn(AltinnPerson("First1 Last1", ssn, listOf(org, subOrg)))
-                assertEquals(listOf(subOrg), altinnUserService.organizationsForService(ssn))
+                whenever(altinnAdapter.getAuthorizedParties(any())).thenReturn(
+                    authorizedPartiesForPerson(
+                        ssn,
+                        organizationsWithResources = listOf(
+                            org to listOf("datanorge-lesetilgang"),
+                            subOrg to listOf("datanorge-lesetilgang")
+                        )
+                    )
+                )
+                val auth = altinnUserService.getAuthorities(ssn)
+                assertEquals(orgRead("920210023"), auth)
             }
         }
-
     }
 
 }
