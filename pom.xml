@@ -31,7 +31,25 @@
 
         <kotlin.version>2.2.21</kotlin.version>
 
+        <!-- security overrides -->
+        <netty.version>4.2.16.Final</netty.version>
+        <jackson-bom.version>3.1.5</jackson-bom.version>
+        <jackson2-bom.version>2.21.5</jackson2-bom.version>
+
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Override Spring Boot BOM's Jackson 2.x line (transitive via jackson-module-kotlin) for security fixes -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson2-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -81,6 +99,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
+            <version>2.21.5</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
