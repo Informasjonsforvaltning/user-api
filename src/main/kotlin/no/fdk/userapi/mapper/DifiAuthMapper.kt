@@ -12,29 +12,39 @@ fun mapAuthoritiesFromDifiRole(roles: List<String>, orgs: List<String>): String 
     var orgIndex = 0
 
     val fdkRoles = roles.mapNotNull {
-        when(it) {
+        when (it) {
             EDITOR -> ROOT_ADMIN
-            AUTHOR ->  {
+
+            AUTHOR -> {
                 if (orgIndex < orgs.size) {
                     val orgId = orgs[orgIndex]
                     orgIndex++
                     RoleFDK(RoleFDK.ResourceType.Organization, orgId, RoleFDK.Role.Admin)
-                } else null
+                } else {
+                    null
+                }
             }
+
             CONTRIBUTOR -> {
                 if (orgIndex < orgs.size) {
                     val orgId = orgs[orgIndex]
                     orgIndex++
                     RoleFDK(RoleFDK.ResourceType.Organization, orgId, RoleFDK.Role.Write)
-                } else null
+                } else {
+                    null
+                }
             }
-            SUBSCRIBER ->  {
+
+            SUBSCRIBER -> {
                 if (orgIndex < orgs.size) {
                     val orgId = orgs[orgIndex]
                     orgIndex++
                     RoleFDK(RoleFDK.ResourceType.Organization, orgId, RoleFDK.Role.Read)
-                } else null
+                } else {
+                    null
+                }
             }
+
             else -> null
         }
     }

@@ -1,6 +1,13 @@
 package no.fdk.userapi.mapper
 
-import no.fdk.userapi.utils.*
+import no.fdk.userapi.utils.AUTHOR_ROLE
+import no.fdk.userapi.utils.CONTRIBUTOR_ROLE
+import no.fdk.userapi.utils.EDITOR_ROLE
+import no.fdk.userapi.utils.SUBSCRIBER_ROLE
+import no.fdk.userapi.utils.SYS_ADMIN
+import no.fdk.userapi.utils.orgAdmin
+import no.fdk.userapi.utils.orgRead
+import no.fdk.userapi.utils.orgWrite
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -71,11 +78,11 @@ class DifiAuth {
 
         val sysAdminFirst = mapAuthoritiesFromDifiRole(listOf(EDITOR_ROLE, CONTRIBUTOR_ROLE, SUBSCRIBER_ROLE), listOf(org0, org1, org2))
         val sysAdminMiddle = mapAuthoritiesFromDifiRole(listOf(AUTHOR_ROLE, EDITOR_ROLE, SUBSCRIBER_ROLE), listOf(org0, org1, org2))
-        val sysAdminAfterDefectiveOrgRoles = mapAuthoritiesFromDifiRole(listOf(SUBSCRIBER_ROLE, CONTRIBUTOR_ROLE, EDITOR_ROLE), listOf(org2))
+        val sysAdminAfterDefectiveOrgRoles =
+            mapAuthoritiesFromDifiRole(listOf(SUBSCRIBER_ROLE, CONTRIBUTOR_ROLE, EDITOR_ROLE), listOf(org2))
 
         assertEquals("$SYS_ADMIN,${orgWrite(org0)},${orgRead(org1)}", sysAdminFirst)
         assertEquals("${orgAdmin(org0)},$SYS_ADMIN,${orgRead(org1)}", sysAdminMiddle)
         assertEquals("${orgRead(org2)},$SYS_ADMIN", sysAdminAfterDefectiveOrgRoles)
     }
-
 }

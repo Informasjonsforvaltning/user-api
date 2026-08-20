@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service
 private val logger = LoggerFactory.getLogger(AltinnAdapter::class.java)
 
 @Service
-class AltinnAdapter(
-    private val hostProperties: HostProperties,
-    private val accessManagementAdapter: AccessManagementAdapter
-) {
+class AltinnAdapter(private val hostProperties: HostProperties, private val accessManagementAdapter: AccessManagementAdapter) {
 
     suspend fun getAuthorizedParties(socialSecurityNumber: String): List<AuthorizedParty>? {
         if (hostProperties.altinnAccessManagementHost == null) {

@@ -15,7 +15,8 @@ import kotlin.test.assertTrue
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(
     properties = ["spring.profiles.active=contract-test"],
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+)
 @Tag("contract")
 class Authorities : WiremockContext() {
 
@@ -26,7 +27,8 @@ class Authorities : WiremockContext() {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/authorities/altinn/12345678901",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -35,7 +37,8 @@ class Authorities : WiremockContext() {
         fun respondWithEmptyAuthStringWhenNotFoundInAltinn() {
             val response = apiGet(
                 path = "/authorities/altinn/12345678901",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("", response["body"])
@@ -45,7 +48,8 @@ class Authorities : WiremockContext() {
         fun respondWithBothSysAdminAndOrgRoleWhenInAdminList() {
             val response = apiGet(
                 path = "/authorities/altinn/10987654321",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
@@ -57,14 +61,14 @@ class Authorities : WiremockContext() {
         fun respondWithAllOrgRolesWhenInAssociatedWithSeveralOrganizations() {
             val response = apiGet(
                 path = "/authorities/altinn/11223344556",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
             assertTrue { body.contains("organization:910258028:write") }
             assertTrue { body.contains("organization:123456789:read") }
         }
-
     }
 
     @Nested
@@ -74,7 +78,8 @@ class Authorities : WiremockContext() {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/authorities/difi?roles=editor&orgs=",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -83,7 +88,8 @@ class Authorities : WiremockContext() {
         fun sysAdminDoesNotNeedToBeAssociatedWithOrg() {
             val response = apiGet(
                 path = "/authorities/difi?roles=editor&orgs=",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("system:root:admin", response["body"])
@@ -93,7 +99,8 @@ class Authorities : WiremockContext() {
         fun sysAdminNotCountedInOrgAssociations() {
             val response = apiGet(
                 path = "/authorities/difi?roles=author,editor,subscriber&orgs=123456789,910258028,920210023",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             val body: String = response["body"] as String
@@ -106,12 +113,12 @@ class Authorities : WiremockContext() {
         fun orgRolesIgnoredWhenMissingOrgAssociations() {
             val response = apiGet(
                 path = "/authorities/difi?roles=contributor,author,subscriber&orgs=123456789",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:123456789:write", response["body"])
         }
-
     }
 
     @Nested
@@ -121,7 +128,8 @@ class Authorities : WiremockContext() {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/authorities/brreg?groups=123",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -130,7 +138,8 @@ class Authorities : WiremockContext() {
         fun respondWithAdminRole() {
             val response = apiGet(
                 path = "/authorities/brreg?groups=123",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:974760673:admin", response["body"])
@@ -140,19 +149,20 @@ class Authorities : WiremockContext() {
         fun respondWithWriteRole() {
             val response0 = apiGet(
                 path = "/authorities/brreg?groups=321",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response0["status"])
             assertEquals("organization:974760673:write", response0["body"])
 
             val response1 = apiGet(
                 path = "/authorities/brreg?groups=222",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response1["status"])
             assertEquals("organization:974760673:write", response1["body"])
         }
-
     }
 
     @Nested
@@ -162,7 +172,8 @@ class Authorities : WiremockContext() {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/authorities/skatt?groups=123",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -171,7 +182,8 @@ class Authorities : WiremockContext() {
         fun respondWithAdminRole() {
             val response = apiGet(
                 path = "/authorities/skatt?groups=123",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:974761076:admin", response["body"])
@@ -181,7 +193,8 @@ class Authorities : WiremockContext() {
         fun respondWithWriteRole() {
             val response = apiGet(
                 path = "/authorities/skatt?groups=321",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:974761076:write", response["body"])
@@ -191,12 +204,11 @@ class Authorities : WiremockContext() {
         fun respondWithReadRole() {
             val response = apiGet(
                 path = "/authorities/skatt?groups=111",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("organization:974761076:read", response["body"])
         }
-
     }
-
 }

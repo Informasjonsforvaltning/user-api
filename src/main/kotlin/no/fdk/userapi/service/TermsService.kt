@@ -10,7 +10,7 @@ class TermsService(
     private val termsAdapter: TermsAdapter,
     private val altinnUserService: AltinnUserService,
     private val brregProperties: BRREGProperties,
-    private val skattProperties: SkattProperties
+    private val skattProperties: SkattProperties,
 ) {
 
     suspend fun getOrgTermsAltinn(id: String): String {
@@ -24,16 +24,12 @@ class TermsService(
             .joinToString(",")
     }
 
-    suspend fun getOrgTermsDifi(orgs: List<String>): String =
-        termsAdapter.acceptedTermsForOrganizations(orgs.distinct())
-            .joinToString(",")
+    suspend fun getOrgTermsDifi(orgs: List<String>): String = termsAdapter.acceptedTermsForOrganizations(orgs.distinct())
+        .joinToString(",")
 
-    suspend fun getOrgTermsBRREG(): String =
-        termsAdapter.acceptedTermsForOrganizations(listOf(brregProperties.orgnr))
-            .joinToString(",")
+    suspend fun getOrgTermsBRREG(): String = termsAdapter.acceptedTermsForOrganizations(listOf(brregProperties.orgnr))
+        .joinToString(",")
 
-    suspend fun getOrgTermsSkatt(): String =
-        termsAdapter.acceptedTermsForOrganizations(listOf(skattProperties.orgnr))
-            .joinToString(",")
-
+    suspend fun getOrgTermsSkatt(): String = termsAdapter.acceptedTermsForOrganizations(listOf(skattProperties.orgnr))
+        .joinToString(",")
 }

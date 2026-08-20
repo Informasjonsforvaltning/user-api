@@ -28,25 +28,29 @@ private val objectMapper = jacksonObjectMapper()
 class TermsAdapter(
     private val hostProperties: HostProperties,
     private val securityProperties: SecurityProperties,
-    private val cacheManager: CacheManager
+    private val cacheManager: CacheManager,
 ) {
 
     private val webClient = WebClient.builder()
-        .clientConnector(ReactorClientHttpConnector(
-            HttpClient.create(
-                ConnectionProvider.builder("custom")
-                    .maxConnections(100)
-                    .pendingAcquireTimeout(Duration.ofSeconds(60))
-                    .build())
-                .responseTimeout(Duration.ofSeconds(30))
-                .headers { headers -> headers.add("X-API-KEY", securityProperties.userApiKey) }
-                .doOnConnected { conn ->
-                    conn.addHandlerLast(ReadTimeoutHandler(30))
-                        .addHandlerLast(WriteTimeoutHandler(30))
-                }))
+        .clientConnector(
+            ReactorClientHttpConnector(
+                HttpClient.create(
+                    ConnectionProvider.builder("custom")
+                        .maxConnections(100)
+                        .pendingAcquireTimeout(Duration.ofSeconds(60))
+                        .build(),
+                )
+                    .responseTimeout(Duration.ofSeconds(30))
+                    .headers { headers -> headers.add("X-API-KEY", securityProperties.userApiKey) }
+                    .doOnConnected { conn ->
+                        conn.addHandlerLast(ReadTimeoutHandler(30))
+                            .addHandlerLast(WriteTimeoutHandler(30))
+                    },
+            ),
+        )
         .build()
 
-    private suspend fun <T: Any> fetchJson(uri: URI, typeRef: TypeReference<T>): T? = withContext(Dispatchers.IO) {
+    private suspend fun <T : Any> fetchJson(uri: URI, typeRef: TypeReference<T>): T? = withContext(Dispatchers.IO) {
         val cache = cacheManager["terms"]
         return@withContext cache?.get(uri.toString())?.let { it.get() as T? } ?: run {
             logger.debug("Fetching JSON")
@@ -66,7 +70,7 @@ class TermsAdapter(
         logger.debug("Fetching terms for organizations")
         val uri = URI("${hostProperties.termsHost}/terms/org?organizations=${organizations.joinToString(",")}")
         val orgAcceptations = try {
-            fetchJson(uri, object: TypeReference<List<OrgAcceptation>>() {}) ?: emptyList()
+            fetchJson(uri, object : TypeReference<List<OrgAcceptation>>() {}) ?: emptyList()
         } catch (ex: Exception) {
             logger.error("Unable to get reportees from Altinn", ex)
             emptyList()
@@ -75,7 +79,5 @@ class TermsAdapter(
         return orgAcceptations.mapNotNull { it.toTermsString() }
     }
 
-    private fun OrgAcceptation.toTermsString(): String? =
-        if (acceptedVersion != "0.0.0") "${orgId}:${acceptedVersion}" else null
-
+    private fun OrgAcceptation.toTermsString(): String? = if (acceptedVersion != "0.0.0") "$orgId:$acceptedVersion" else null
 }

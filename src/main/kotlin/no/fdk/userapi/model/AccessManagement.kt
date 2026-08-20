@@ -3,17 +3,10 @@ package no.fdk.userapi.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class AuthorizedPartyRequest(
-    val type: String,
-    val value: String,
-    val partyFilter: List<UrnAttribute>? = null
-)
+data class AuthorizedPartyRequest(val type: String, val value: String, val partyFilter: List<UrnAttribute>? = null)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class UrnAttribute(
-    val type: String,
-    val value: String
-)
+data class UrnAttribute(val type: String, val value: String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class AuthorizedParty(
@@ -31,11 +24,8 @@ data class AuthorizedParty(
     val authorizedAccessPackages: List<String>? = null,
     val authorizedRoles: List<String>? = null,
     val authorizedInstances: List<AuthorizedResource>? = null,
-    val subunits: List<AuthorizedParty>? = null
+    val subunits: List<AuthorizedParty>? = null,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class AuthorizedResource(
-    val resourceId: String? = null,
-    val instanceId: String? = null
-)
+data class AuthorizedResource(val resourceId: String? = null, val instanceId: String? = null)

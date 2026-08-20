@@ -11,11 +11,11 @@ import no.fdk.userapi.model.AuthorizedParty
 import no.fdk.userapi.model.AuthorizedPartyRequest
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import java.time.Duration
 
 private val logger = LoggerFactory.getLogger(AccessManagementAdapter::class.java)
@@ -23,10 +23,7 @@ private val logger = LoggerFactory.getLogger(AccessManagementAdapter::class.java
 private const val SUBJECT_TYPE_PERSON = "urn:altinn:person:identifier-no"
 
 @Service
-class AccessManagementAdapter(
-    private val hostProperties: HostProperties,
-    private val maskinportenAdapter: MaskinportenAdapter
-) {
+class AccessManagementAdapter(private val hostProperties: HostProperties, private val maskinportenAdapter: MaskinportenAdapter) {
     private val baseUrl: String?
         get() = hostProperties.altinnAccessManagementHost
 
@@ -40,14 +37,14 @@ class AccessManagementAdapter(
                             ConnectionProvider.builder("access-management")
                                 .maxConnections(50)
                                 .pendingAcquireTimeout(Duration.ofSeconds(15))
-                                .build()
+                                .build(),
                         )
                             .responseTimeout(Duration.ofSeconds(30))
                             .doOnConnected { conn ->
                                 conn.addHandlerLast(ReadTimeoutHandler(30))
                                     .addHandlerLast(WriteTimeoutHandler(30))
-                            }
-                    )
+                            },
+                    ),
                 )
                 .build()
         }
@@ -66,12 +63,16 @@ class AccessManagementAdapter(
         }
         val request = AuthorizedPartyRequest(
             type = SUBJECT_TYPE_PERSON,
-            value = ssn
+            value = ssn,
         )
         return@withContext try {
             logger.debug("Fetching authorized parties from Altinn Access Management")
             client.post()
-                .uri { it.path("/resourceowner/authorizedparties").queryParam("includeAltinn3", true).queryParam("includeResources", true).build() }
+                .uri {
+                    it.path(
+                        "/resourceowner/authorizedparties",
+                    ).queryParam("includeAltinn3", true).queryParam("includeResources", true).build()
+                }
                 .header("Authorization", "Bearer $token")
                 .bodyValue(request)
                 .retrieve()
