@@ -5,9 +5,7 @@ import no.fdk.userapi.model.RoleFDK
 import org.springframework.stereotype.Service
 
 @Service
-class SkattService(
-    private val skattProperties: SkattProperties
-) {
+class SkattService(private val skattProperties: SkattProperties) {
 
     fun getAuthorities(groups: List<String>): String {
         val role = when {
@@ -19,8 +17,7 @@ class SkattService(
         return RoleFDK(
             RoleFDK.ResourceType.Organization,
             skattProperties.orgnr,
-            role
+            role,
         ).toString()
     }
-
 }

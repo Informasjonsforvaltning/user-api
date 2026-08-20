@@ -13,23 +13,21 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(value = ["/users"])
-class UsersController (
-    private val altinnUserService: AltinnUserService
-) {
+class UsersController(private val altinnUserService: AltinnUserService) {
 
     /**
      * This endpoint is active user database
      * Currently We do not store permanently users, instead we get dynamically the user data and privileges from Altinn.
      */
     @GetMapping(value = ["/{id}"])
-    suspend fun getUserInfo(@PathVariable id: String): ResponseEntity<UserFDK> =
-        when {
-            !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
-            else -> {
-                altinnUserService.getUser(id)
-                    ?.toUserFDK()
-                    ?.let { ResponseEntity(it, HttpStatus.OK) }
-                    ?: ResponseEntity(HttpStatus.NOT_FOUND)
-            }
+    suspend fun getUserInfo(@PathVariable id: String): ResponseEntity<UserFDK> = when {
+        !isPid(id) -> ResponseEntity(HttpStatus.BAD_REQUEST)
+
+        else -> {
+            altinnUserService.getUser(id)
+                ?.toUserFDK()
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NOT_FOUND)
         }
+    }
 }

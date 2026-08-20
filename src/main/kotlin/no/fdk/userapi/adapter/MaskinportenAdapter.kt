@@ -10,20 +10,17 @@ import no.fdk.userapi.configuration.HostProperties
 import no.fdk.userapi.configuration.SecurityProperties
 import no.fdk.userapi.model.TokenResponse
 import org.slf4j.LoggerFactory
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import java.time.Duration
 
 private val logger = LoggerFactory.getLogger(MaskinportenAdapter::class.java)
 
 @Service
-class MaskinportenAdapter(
-    private val hostProperties: HostProperties,
-    private val securityProperties: SecurityProperties
-) {
+class MaskinportenAdapter(private val hostProperties: HostProperties, private val securityProperties: SecurityProperties) {
     private val baseUrl: String?
         get() = hostProperties.maskinportenApiHost
 
@@ -37,14 +34,14 @@ class MaskinportenAdapter(
                             ConnectionProvider.builder("maskinporten")
                                 .maxConnections(20)
                                 .pendingAcquireTimeout(Duration.ofSeconds(10))
-                                .build()
+                                .build(),
                         )
                             .responseTimeout(Duration.ofSeconds(15))
                             .doOnConnected { conn ->
                                 conn.addHandlerLast(ReadTimeoutHandler(15))
                                     .addHandlerLast(WriteTimeoutHandler(15))
-                            }
-                    )
+                            },
+                    ),
                 )
                 .build()
         }

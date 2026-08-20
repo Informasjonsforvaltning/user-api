@@ -1,7 +1,11 @@
 package no.fdk.userapi.mapper
 
+import no.fdk.userapi.model.AltinnOrganization
+import no.fdk.userapi.model.AltinnPerson
+import no.fdk.userapi.model.AltinnReporteeType
 import no.fdk.userapi.model.AuthorizedParty
-import no.fdk.userapi.model.*
+import no.fdk.userapi.model.RoleFDK
+import no.fdk.userapi.model.UserFDK
 
 fun List<AuthorizedParty>.toAltinnPerson(ssn: String): AltinnPerson? {
     val person = firstOrNull { it.type == "Person" && it.personId == ssn } ?: return null
@@ -10,13 +14,12 @@ fun List<AuthorizedParty>.toAltinnPerson(ssn: String): AltinnPerson? {
     return AltinnPerson(person.name, person.personId, orgs)
 }
 
-fun AuthorizedParty.toAltinnOrganization(): AltinnOrganization =
-    AltinnOrganization(
-        name = name,
-        organizationForm = unitType,
-        organizationNumber = organizationNumber,
-        type = AltinnReporteeType.Organization
-    )
+fun AuthorizedParty.toAltinnOrganization(): AltinnOrganization = AltinnOrganization(
+    name = name,
+    organizationForm = unitType,
+    organizationNumber = organizationNumber,
+    type = AltinnReporteeType.Organization,
+)
 
 fun List<AuthorizedParty>.toFDKRoles(ssn: String, orgNumber: String): List<RoleFDK> {
     val org = firstOrNull { it.type == "Organization" && it.organizationNumber == orgNumber } ?: return emptyList()
@@ -32,7 +35,7 @@ fun AltinnPerson.toUserFDK(): UserFDK? {
     return UserFDK(
         id = socialSecurityNumber!!,
         firstName = names.dropLast(1).joinToString(" "),
-        lastName = names.last()
+        lastName = names.last(),
     )
 }
 

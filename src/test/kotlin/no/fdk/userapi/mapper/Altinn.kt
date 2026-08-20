@@ -1,9 +1,9 @@
 package no.fdk.userapi.mapper
 
+import no.fdk.userapi.model.AltinnPerson
 import no.fdk.userapi.model.AuthorizedParty
 import no.fdk.userapi.model.RoleFDK
 import no.fdk.userapi.model.UserFDK
-import no.fdk.userapi.model.AltinnPerson
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ class Altinn {
             val person = AltinnPerson(
                 name = "First Last",
                 socialSecurityNumber = null,
-                organizations = emptyList()
+                organizations = emptyList(),
             )
 
             assertNull(person.toUserFDK())
@@ -33,18 +33,17 @@ class Altinn {
             val person = AltinnPerson(
                 name = "First Middle Last",
                 socialSecurityNumber = "23076102252",
-                organizations = emptyList()
+                organizations = emptyList(),
             )
 
             val expected = UserFDK(
                 id = "23076102252",
                 firstName = "First Middle",
-                lastName = "Last"
+                lastName = "Last",
             )
 
             assertEquals(expected, person.toUserFDK())
         }
-
     }
 
     @Nested
@@ -53,12 +52,16 @@ class Altinn {
         @Test
         fun mapsResourceIdsToRoles() {
             val parties = listOf(
-                AuthorizedParty(organizationNumber = "999888777", type = "Organization", authorizedResources = listOf("datanorge-lesetilgang", "datanorge-skrivetilgang"))
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedResources = listOf("datanorge-lesetilgang", "datanorge-skrivetilgang"),
+                ),
             )
             val result = parties.toFDKRoles("11115601999", "999888777")
             val expected = listOf(
                 RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Read),
-                RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Write)
+                RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Write),
             )
             assertEquals(expected.size, result.size)
             assertTrue(result.containsAll(expected))
@@ -70,5 +73,4 @@ class Altinn {
             assertTrue(parties.toFDKRoles("123", "999").isEmpty())
         }
     }
-
 }

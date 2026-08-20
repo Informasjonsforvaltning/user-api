@@ -12,7 +12,8 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(
     properties = ["spring.profiles.active=contract-test"],
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+)
 @Tag("contract")
 class Users : WiremockContext() {
 
@@ -37,5 +38,4 @@ class Users : WiremockContext() {
         assertEquals(HttpStatus.OK.value(), response["status"])
         assertEquals(expectedBody, response["body"])
     }
-
 }

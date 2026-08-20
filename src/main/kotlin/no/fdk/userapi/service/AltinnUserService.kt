@@ -13,17 +13,15 @@ import org.springframework.stereotype.Service
 private val logger = LoggerFactory.getLogger(AltinnUserService::class.java)
 
 @Service
-class AltinnUserService (
-    private val whitelists: WhitelistProperties,
-    private val altinnAdapter: AltinnAdapter
-) {
+class AltinnUserService(private val whitelists: WhitelistProperties, private val altinnAdapter: AltinnAdapter) {
 
-    suspend fun getUser(id: String): AltinnPerson? =
-        altinnAdapter.getPerson(id)
+    suspend fun getUser(id: String): AltinnPerson? = altinnAdapter.getPerson(id)
 
-    fun getSysAdminAuthorities(id: String): List<String> =
-        if (whitelists.adminList.contains(id)) listOf(ROOT_ADMIN.toString())
-        else emptyList()
+    fun getSysAdminAuthorities(id: String): List<String> = if (whitelists.adminList.contains(id)) {
+        listOf(ROOT_ADMIN.toString())
+    } else {
+        emptyList()
+    }
 
     private fun isWhitelistedOrgNumber(org: AltinnOrganization) =
         org.organizationNumber?.let { whitelists.orgNrWhitelist.contains(it) } ?: false
@@ -35,7 +33,7 @@ class AltinnUserService (
         val resourceRoleTokens: MutableList<String> = mutableListOf()
         val authTasks = listOf(
             organizationAuthorities(ssn),
-            getSysAdminAuthorities(ssn)
+            getSysAdminAuthorities(ssn),
         )
         logger.debug("Getting authorities, running coroutines")
         authTasks.forEach { resourceRoleTokens.addAll(it) }
@@ -60,7 +58,9 @@ class AltinnUserService (
                 .filter { org: AltinnOrganization ->
                     isWhitelistedOrgNumber(org) || isWhitelistedOrgForm(org)
                 }
-        } else emptyList()
+        } else {
+            emptyList()
+        }
 
     suspend fun getOrganizationsForTerms(ssn: String): List<AltinnOrganization> {
         logger.debug("Getting organizations for terms, running coroutines")

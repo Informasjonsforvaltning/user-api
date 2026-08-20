@@ -14,9 +14,10 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(
     properties = ["spring.profiles.active=contract-test"],
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+)
 @Tag("contract")
-class Terms : WiremockContext()  {
+class Terms : WiremockContext() {
 
     @Nested
     internal inner class Altinn {
@@ -25,7 +26,8 @@ class Terms : WiremockContext()  {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/terms/altinn/11223344556",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -34,7 +36,8 @@ class Terms : WiremockContext()  {
         fun okWithEmptyBodyWhenNotFoundInAltinn() {
             val response = apiGet(
                 path = "/terms/altinn/12345678901",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("", response["body"])
@@ -44,12 +47,12 @@ class Terms : WiremockContext()  {
         fun checksAllOrgsAltinnHasAssociatedWithThePerson() {
             val response = apiGet(
                 path = "/terms/altinn/11223344556",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("910258028:1.0.0", response["body"])
         }
-
     }
 
     @Nested
@@ -59,7 +62,8 @@ class Terms : WiremockContext()  {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/terms/difi?orgs=910258028",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -68,7 +72,8 @@ class Terms : WiremockContext()  {
         fun respondWithVersionZeroWhenNoAcceptationFound() {
             val response = apiGet(
                 path = "/terms/difi?orgs=123456789",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("", response["body"])
@@ -78,12 +83,12 @@ class Terms : WiremockContext()  {
         fun checksAllGivenOrgs() {
             val response = apiGet(
                 path = "/terms/difi?orgs=123456789,920210023",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("920210023:1.2.3", response["body"])
         }
-
     }
 
     @Nested
@@ -93,7 +98,8 @@ class Terms : WiremockContext()  {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/terms/brreg",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -102,12 +108,12 @@ class Terms : WiremockContext()  {
         fun respondWithCorrectTerms() {
             val response = apiGet(
                 path = "/terms/brreg",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("974760673:1.0.1", response["body"])
         }
-
     }
 
     @Nested
@@ -117,7 +123,8 @@ class Terms : WiremockContext()  {
         fun forbiddenWithWrongApiKey() {
             val response = apiGet(
                 path = "/terms/skatt",
-                headers = mapOf(Pair("X-API-KEY", "wrong-key")))
+                headers = mapOf(Pair("X-API-KEY", "wrong-key")),
+            )
 
             assertEquals(HttpStatus.FORBIDDEN.value(), response["status"])
         }
@@ -126,11 +133,11 @@ class Terms : WiremockContext()  {
         fun respondWithCorrectTerms() {
             val response = apiGet(
                 path = "/terms/skatt",
-                headers = mapOf(Pair("X-API-KEY", SSO_KEY)))
+                headers = mapOf(Pair("X-API-KEY", SSO_KEY)),
+            )
 
             assertEquals(HttpStatus.OK.value(), response["status"])
             assertEquals("974761076:1.1.1", response["body"])
         }
-
     }
 }

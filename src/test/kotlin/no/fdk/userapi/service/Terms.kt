@@ -67,12 +67,17 @@ class Terms {
                 val person = AltinnPerson(
                     socialSecurityNumber = "23076102252",
                     name = "First Last",
-                    organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld))
+                    organizations = listOf(ORG, orgNotAccepted, orgAcceptedOld),
+                )
 
                 whenever(altinnUserService.getOrganizationsForTerms(person.socialSecurityNumber!!))
                     .thenReturn(person.organizations)
 
-                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(ORG.organizationNumber!!, orgNotAccepted.organizationNumber!!, orgAcceptedOld.organizationNumber!!)))
+                whenever(
+                    termsAdapter.acceptedTermsForOrganizations(
+                        listOf(ORG.organizationNumber!!, orgNotAccepted.organizationNumber!!, orgAcceptedOld.organizationNumber!!),
+                    ),
+                )
                     .thenReturn(listOf("${ORG.organizationNumber}:1.2.3", "${orgAcceptedOld.organizationNumber}:1.0.0"))
 
                 val response = termsService.getOrgTermsAltinn(person.socialSecurityNumber)
@@ -82,7 +87,6 @@ class Terms {
                 assertEquals(expected, response)
             }
         }
-
     }
 
     @Nested
@@ -122,7 +126,6 @@ class Terms {
                 assertEquals("$org0:1.2.3,$org2:1.0.0", response)
             }
         }
-
     }
 
     @Nested
@@ -149,7 +152,6 @@ class Terms {
                 assertEquals("974760673:1.2.3", termsService.getOrgTermsBRREG())
             }
         }
-
     }
 
     @Nested
@@ -176,7 +178,5 @@ class Terms {
                 assertEquals("974761076:1.2.3", termsService.getOrgTermsSkatt())
             }
         }
-
     }
-
 }
