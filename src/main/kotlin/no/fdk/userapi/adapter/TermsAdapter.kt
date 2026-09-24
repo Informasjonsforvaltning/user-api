@@ -11,11 +11,10 @@ import no.fdk.userapi.configuration.HostProperties
 import no.fdk.userapi.configuration.SecurityProperties
 import no.fdk.userapi.model.OrgAcceptation
 import org.slf4j.LoggerFactory
-import org.springframework.cache.CacheManager
-import org.springframework.cache.get
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
 import java.net.URI
@@ -25,11 +24,7 @@ private val logger = LoggerFactory.getLogger(TermsAdapter::class.java)
 private val objectMapper = jacksonObjectMapper()
 
 @Service
-class TermsAdapter(
-    private val hostProperties: HostProperties,
-    private val securityProperties: SecurityProperties,
-    private val cacheManager: CacheManager,
-) {
+class TermsAdapter(private val hostProperties: HostProperties, private val securityProperties: SecurityProperties) {
 
     private val webClient = WebClient.builder()
         .clientConnector(
@@ -51,18 +46,15 @@ class TermsAdapter(
         .build()
 
     private suspend fun <T : Any> fetchJson(uri: URI, typeRef: TypeReference<T>): T? = withContext(Dispatchers.IO) {
-        val cache = cacheManager["terms"]
-        return@withContext cache?.get(uri.toString())?.let { it.get() as T? } ?: run {
+        return@withContext run {
             logger.debug("Fetching JSON")
             val response = webClient.get()
                 .uri(uri)
                 .retrieve()
-                .bodyToMono(String::class.java)
+                .bodyToMono<String>()
                 .awaitSingle()
 
-            val jsonObject = objectMapper.readValue(response, typeRef)
-            cache?.put(uri.toString(), jsonObject)
-            jsonObject
+            objectMapper.readValue(response, typeRef)
         }
     }
 
