@@ -19,9 +19,10 @@ import kotlin.test.assertEquals
 class Terms {
     private val termsAdapter: TermsAdapter = mock()
     private val altinnUserService: AltinnUserService = mock()
+    private val ansattPortenService: AnsattPortenService = mock()
     private val brregProperties: BRREGProperties = mock()
     private val skattProperties: SkattProperties = mock()
-    private val termsService = TermsService(termsAdapter, altinnUserService, brregProperties, skattProperties)
+    private val termsService = TermsService(termsAdapter, altinnUserService, ansattPortenService, brregProperties, skattProperties)
 
     @Nested
     internal inner class AltinnTerms {
@@ -176,6 +177,47 @@ class Terms {
                     .thenReturn(listOf("974761076:1.2.3"))
 
                 assertEquals("974761076:1.2.3", termsService.getOrgTermsSkatt())
+            }
+        }
+    }
+
+    @Nested
+    internal inner class AnsattPortenTerms {
+
+        @Test
+        fun orgHasNotAccepted() {
+            runTest {
+                val details = "encoded-details"
+                whenever(ansattPortenService.getOrganizationsForTerms(details)).thenReturn(listOf("910244132"))
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("910244132"))).thenReturn(emptyList())
+
+                assertEquals("", termsService.getOrgTermsAnsattPorten(details))
+            }
+        }
+
+        @Test
+        fun orgHasAccepted() {
+            runTest {
+                val details = "encoded-details"
+                whenever(ansattPortenService.getOrganizationsForTerms(details)).thenReturn(listOf("910244132"))
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf("910244132")))
+                    .thenReturn(listOf("910244132:1.2.3"))
+
+                assertEquals("910244132:1.2.3", termsService.getOrgTermsAnsattPorten(details))
+            }
+        }
+
+        @Test
+        fun severalOrgs() {
+            runTest {
+                val details = "encoded-details"
+                val org0 = "910244132"
+                val org1 = "123456789"
+                whenever(ansattPortenService.getOrganizationsForTerms(details)).thenReturn(listOf(org0, org1))
+                whenever(termsAdapter.acceptedTermsForOrganizations(listOf(org0, org1)))
+                    .thenReturn(listOf("$org0:1.2.3", "$org1:1.0.0"))
+
+                assertEquals("$org0:1.2.3,$org1:1.0.0", termsService.getOrgTermsAnsattPorten(details))
             }
         }
     }

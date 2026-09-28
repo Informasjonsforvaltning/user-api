@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 class TermsService(
     private val termsAdapter: TermsAdapter,
     private val altinnUserService: AltinnUserService,
+    private val ansattPortenService: AnsattPortenService,
     private val brregProperties: BRREGProperties,
     private val skattProperties: SkattProperties,
 ) {
@@ -32,4 +33,8 @@ class TermsService(
 
     suspend fun getOrgTermsSkatt(): String = termsAdapter.acceptedTermsForOrganizations(listOf(skattProperties.orgnr))
         .joinToString(",")
+
+    suspend fun getOrgTermsAnsattPorten(details: String): String =
+        termsAdapter.acceptedTermsForOrganizations(ansattPortenService.getOrganizationsForTerms(details))
+            .joinToString(",")
 }

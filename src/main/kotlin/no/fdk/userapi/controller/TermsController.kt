@@ -48,4 +48,14 @@ class TermsController(private val termsService: TermsService, private val endpoi
         } else {
             ResponseEntity(HttpStatus.FORBIDDEN)
         }
+
+    @GetMapping(value = ["/ansattporten"])
+    suspend fun getOrgTermsAnsattPorten(
+        exchange: ServerWebExchange,
+        @RequestParam(value = "details", required = true) details: String,
+    ): ResponseEntity<String> = if (endpointPermissions.isFromFDKCluster(exchange.request)) {
+        ResponseEntity(termsService.getOrgTermsAnsattPorten(details), HttpStatus.OK)
+    } else {
+        ResponseEntity(HttpStatus.FORBIDDEN)
+    }
 }
