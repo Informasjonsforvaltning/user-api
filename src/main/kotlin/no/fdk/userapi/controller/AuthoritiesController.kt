@@ -3,6 +3,7 @@ package no.fdk.userapi.controller
 import no.fdk.userapi.mapper.isPid
 import no.fdk.userapi.mapper.mapAuthoritiesFromDifiRole
 import no.fdk.userapi.service.AltinnUserService
+import no.fdk.userapi.service.AnsattPortenService
 import no.fdk.userapi.service.BRREGService
 import no.fdk.userapi.service.EndpointPermissions
 import no.fdk.userapi.service.SkattService
@@ -19,6 +20,7 @@ import org.springframework.web.server.ServerWebExchange
 @RequestMapping(value = ["/authorities"])
 class AuthoritiesController(
     private val altinnUserService: AltinnUserService,
+    private val ansattPortenService: AnsattPortenService,
     private val endpointPermissions: EndpointPermissions,
     private val brregService: BRREGService,
     private val skattService: SkattService,
@@ -58,6 +60,16 @@ class AuthoritiesController(
         @RequestParam(value = "groups", required = true) groups: List<String>,
     ): ResponseEntity<String> = if (endpointPermissions.isFromFDKCluster(exchange.request)) {
         ResponseEntity(skattService.getAuthorities(groups), HttpStatus.OK)
+    } else {
+        ResponseEntity(HttpStatus.FORBIDDEN)
+    }
+
+    @GetMapping(value = ["/ansattporten"])
+    fun getAnsattPortenAuthorities(
+        exchange: ServerWebExchange,
+        @RequestParam(value = "details", required = true) details: String,
+    ): ResponseEntity<String> = if (endpointPermissions.isFromFDKCluster(exchange.request)) {
+        ResponseEntity(ansattPortenService.getAuthorities(details), HttpStatus.OK)
     } else {
         ResponseEntity(HttpStatus.FORBIDDEN)
     }

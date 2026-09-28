@@ -41,7 +41,7 @@ fun AltinnPerson.toUserFDK(): UserFDK? {
 
 fun isPid(username: String): Boolean = username.matches(Regex("^\\d{11}$"))
 
-private fun resourceIdToRole(resourceId: String?): RoleFDK.Role? = when (resourceId) {
+fun resourceIdToRole(resourceId: String?): RoleFDK.Role? = when (resourceId) {
     "datanorge-lesetilgang" -> RoleFDK.Role.Read
     "datanorge-skrivetilgang" -> RoleFDK.Role.Write
     "datanorge-virksomhetsadministrator" -> RoleFDK.Role.Admin
