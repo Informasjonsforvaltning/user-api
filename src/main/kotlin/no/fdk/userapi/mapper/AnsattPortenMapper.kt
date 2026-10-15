@@ -1,9 +1,9 @@
 package no.fdk.userapi.mapper
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.fdk.userapi.model.AnsattPortenDetails
 import no.fdk.userapi.model.AnsattPortenParty
+import tools.jackson.core.type.TypeReference
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.util.Base64
 
 private val objectMapper = jacksonObjectMapper()
