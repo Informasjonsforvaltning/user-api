@@ -7,7 +7,7 @@ data class UserFDK(val id: String, val firstName: String?, val lastName: String?
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OrgAcceptation(val orgId: String, val acceptedVersion: String)
 
-class RoleFDK(private val resourceType: ResourceType, private val resourceId: String, private val role: Role) {
+data class RoleFDK(private val resourceType: ResourceType, private val resourceId: String, private val role: Role) {
     override fun toString(): String = "${resourceType.value}:$resourceId:${role.value}"
 
     enum class ResourceType(val value: String) {
