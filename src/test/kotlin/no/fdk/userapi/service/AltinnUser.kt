@@ -29,6 +29,7 @@ private fun authorizedPartiesForPerson(
     ssn: String,
     personName: String = "First Last",
     organizationsWithResources: List<Pair<AltinnOrganization, List<String>>> = emptyList(),
+    accessPackages: List<String> = emptyList(),
 ): List<AuthorizedParty> {
     val person = AuthorizedParty(name = personName, personId = ssn, type = "Person")
     val orgs = organizationsWithResources.map { (org, resources) ->
@@ -38,6 +39,7 @@ private fun authorizedPartiesForPerson(
             type = "Organization",
             unitType = org.organizationForm,
             authorizedResources = resources,
+            authorizedAccessPackages = accessPackages,
             isDeleted = false,
         )
     }
@@ -107,6 +109,21 @@ class AltinnUser {
                     authorizedPartiesForPerson(
                         ssn,
                         organizationsWithResources = listOf(ORG to listOf("datanorge-virksomhetsadministrator")),
+                    ),
+                )
+                assertEquals(orgAdmin(ORG.organizationNumber!!), altinnUserService.getAuthorities(ssn))
+            }
+        }
+
+        @Test
+        fun personIsOrgAdminViaAccessPackage() {
+            runTest {
+                val ssn = "12345678901"
+                whenever(altinnAdapter.getAuthorizedParties(any())).thenReturn(
+                    authorizedPartiesForPerson(
+                        ssn,
+                        organizationsWithResources = listOf(ORG to emptyList()),
+                        accessPackages = listOf("informasjon-og-kommunikasjon"),
                     ),
                 )
                 assertEquals(orgAdmin(ORG.organizationNumber!!), altinnUserService.getAuthorities(ssn))

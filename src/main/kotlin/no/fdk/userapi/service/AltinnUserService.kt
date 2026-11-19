@@ -47,7 +47,13 @@ class AltinnUserService(private val whitelists: WhitelistProperties, private val
         val orgs = organizationsMatchingServiceWhitelists(person)
         logger.debug("Getting organization authorities from single authorized-parties response")
         return orgs.flatMap { org ->
-            parties.toFDKRoles(ssn, org.organizationNumber!!).orEmpty().map { it.toString() }
+            val orgnr = org.organizationNumber
+            if (orgnr == null) {
+                logger.debug("Skipping organization without organization number when mapping FDK roles")
+                emptyList()
+            } else {
+                parties.toFDKRoles(orgnr).map { it.toString() }
+            }
         }
     }
 
