@@ -21,11 +21,15 @@ fun AuthorizedParty.toAltinnOrganization(): AltinnOrganization = AltinnOrganizat
     type = AltinnReporteeType.Organization,
 )
 
-fun List<AuthorizedParty>.toFDKRoles(ssn: String, orgNumber: String): List<RoleFDK> {
+fun List<AuthorizedParty>.toFDKRoles(orgNumber: String): List<RoleFDK> {
     val org = firstOrNull { it.type == "Organization" && it.organizationNumber == orgNumber } ?: return emptyList()
-    return org.authorizedResources.orEmpty()
-        .mapNotNull { resourceIdToRole(it)?.let { role -> RoleFDK(RoleFDK.ResourceType.Organization, orgNumber, role) } }
+
+    val rolesFromAccessPackages = org.authorizedAccessPackages.orEmpty().mapNotNull(::accessPackageToRole)
+    val rolesFromResources = org.authorizedResources.orEmpty().mapNotNull(::resourceIdToRole)
+
+    return (rolesFromAccessPackages + rolesFromResources)
         .distinct()
+        .map { RoleFDK(RoleFDK.ResourceType.Organization, orgNumber, it) }
 }
 
 fun AltinnPerson.toUserFDK(): UserFDK? {
@@ -40,6 +44,11 @@ fun AltinnPerson.toUserFDK(): UserFDK? {
 }
 
 fun isPid(username: String): Boolean = username.matches(Regex("^\\d{11}$"))
+
+fun accessPackageToRole(accessPackage: String): RoleFDK.Role? = when (accessPackage) {
+    "informasjon-og-kommunikasjon" -> RoleFDK.Role.Admin
+    else -> null
+}
 
 fun resourceIdToRole(resourceId: String?): RoleFDK.Role? = when (resourceId) {
     "datanorge-lesetilgang" -> RoleFDK.Role.Read
