@@ -69,9 +69,11 @@ class AccessManagementAdapter(private val hostProperties: HostProperties, privat
             logger.debug("Fetching authorized parties from Altinn Access Management")
             client.post()
                 .uri {
-                    it.path(
-                        "/resourceowner/authorizedparties",
-                    ).queryParam("includeAltinn3", true).queryParam("includeResources", true).build()
+                    it.path("/resourceowner/authorizedparties")
+                        .queryParam("includeAltinn3", true)
+                        .queryParam("includeResources", true)
+                        .queryParam("includeAccessPackages", true)
+                        .build()
                 }
                 .header("Authorization", "Bearer $token")
                 .bodyValue(request)

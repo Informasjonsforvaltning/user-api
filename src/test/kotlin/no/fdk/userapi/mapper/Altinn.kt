@@ -58,7 +58,7 @@ class Altinn {
                     authorizedResources = listOf("datanorge-lesetilgang", "datanorge-skrivetilgang"),
                 ),
             )
-            val result = parties.toFDKRoles("11115601999", "999888777")
+            val result = parties.toFDKRoles("999888777")
             val expected = listOf(
                 RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Read),
                 RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Write),
@@ -68,9 +68,100 @@ class Altinn {
         }
 
         @Test
+        fun mapsAccessPackageToAdminRole() {
+            val parties = listOf(
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedAccessPackages = listOf("informasjon-og-kommunikasjon"),
+                ),
+            )
+            val expected = listOf(RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Admin))
+            assertEquals(expected, parties.toFDKRoles("999888777"))
+        }
+
+        @Test
+        fun ignoresUnknownAccessPackages() {
+            val parties = listOf(
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedAccessPackages = listOf("skatt-og-avgift", "regnskap-og-okonomirapportering"),
+                ),
+            )
+            assertTrue(parties.toFDKRoles("999888777").isEmpty())
+        }
+
+        @Test
+        fun combinesRolesFromAccessPackagesAndResources() {
+            val parties = listOf(
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedResources = listOf("datanorge-lesetilgang"),
+                    authorizedAccessPackages = listOf("skatt-og-avgift", "informasjon-og-kommunikasjon"),
+                ),
+            )
+            val result = parties.toFDKRoles("999888777")
+            val expected = listOf(
+                RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Admin),
+                RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Read),
+            )
+            assertEquals(expected.size, result.size)
+            assertTrue(result.containsAll(expected))
+        }
+
+        @Test
+        fun adminFromBothAccessPackageAndResourceIsReturnedOnce() {
+            val parties = listOf(
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedResources = listOf("datanorge-virksomhetsadministrator"),
+                    authorizedAccessPackages = listOf("informasjon-og-kommunikasjon"),
+                ),
+            )
+            val expected = listOf(RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Admin))
+            assertEquals(expected, parties.toFDKRoles("999888777"))
+        }
+
+        @Test
+        fun accessPackagesOnOtherOrgAreNotApplied() {
+            val parties = listOf(
+                AuthorizedParty(
+                    organizationNumber = "111222333",
+                    type = "Organization",
+                    authorizedAccessPackages = listOf("informasjon-og-kommunikasjon"),
+                ),
+                AuthorizedParty(
+                    organizationNumber = "999888777",
+                    type = "Organization",
+                    authorizedResources = listOf("datanorge-lesetilgang"),
+                ),
+            )
+            val expected = listOf(RoleFDK(RoleFDK.ResourceType.Organization, "999888777", RoleFDK.Role.Read))
+            assertEquals(expected, parties.toFDKRoles("999888777"))
+        }
+
+        @Test
         fun unknownOrgReturnsEmpty() {
             val parties = listOf(AuthorizedParty(organizationNumber = "111", type = "Organization"))
-            assertTrue(parties.toFDKRoles("123", "999").isEmpty())
+            assertTrue(parties.toFDKRoles("999").isEmpty())
+        }
+    }
+
+    @Nested
+    internal inner class AccessPackageToRole {
+
+        @Test
+        fun informasjonOgKommunikasjonIsAdmin() {
+            assertEquals(RoleFDK.Role.Admin, accessPackageToRole("informasjon-og-kommunikasjon"))
+        }
+
+        @Test
+        fun unknownAccessPackageIsNull() {
+            assertNull(accessPackageToRole("skatt-og-avgift"))
+            assertNull(accessPackageToRole(""))
         }
     }
 }
